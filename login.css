@@ -1,0 +1,24 @@
+div.loginButtonContainer button{
+font-size: 20px;
+padding: 10px 40px;
+background: rgb(67, 130, 120);
+border: none;
+color: rgb(171, 84, 195);
+}
+
+div.header{
+    width:100%;
+    height:20px;
+    background:rgb(173, 64, 128);
+}
+div.banner{
+    background: url('OIP.jpeg')no-repeat center center fixed;
+    background-size: cover;
+    background-color: blue;
+}
+
+div.homepageContainer{
+    width: 100%;
+    max-width :900px;
+    margin: 0 auto;
+}
