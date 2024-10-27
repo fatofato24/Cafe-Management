@@ -14,7 +14,7 @@ div.header{
 div.banner{
     background: url('OIP.jpeg')no-repeat center center fixed;
     background-size: cover;
-    background-color: blue;
+    background-color: rgb(144, 144, 211);
 }
 
 div.homepageContainer{
