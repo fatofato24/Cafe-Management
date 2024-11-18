@@ -2,6 +2,10 @@
 
 // Start session.
 session_start();
+// If the user is already logged in, redirect to the dashboard
+if (isset($_SESSION['user'])) {
+    header("Location: dashboard.php");
+}
 
 $error_message = '';
 

@@ -1,3 +1,13 @@
+
+<?php
+// Start the session.
+session_start();
+if (!isset($_SESSION['user'])) header('location: login.php');
+
+$user = $_SESSION['user'];
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +21,7 @@
     <header>
         <div class="dashboard_topNav">
             <a href="#" id="nav"><i class="fa fa-navicon"></i></a>
-            <a href="" id="logoutBtn"><i class="fa fa-power-off"></i>Log-out</a>
+            <a href="database/logout.php" id="logoutBtn"><i class="fa fa-power-off"></i>Log-out</a>
         </div>
     </header>
 
