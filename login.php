@@ -5,6 +5,7 @@ session_start();
 // If the user is already logged in, redirect to the dashboard
 if (isset($_SESSION['user'])) {
     header("Location: dashboard.php");
+    exit;
 }
 
 $error_message = '';
@@ -15,22 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM users WHERE users.email = :username AND users.password = :password";
+    $query = "SELECT * FROM users WHERE email = :username AND password = :password";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':password', $password);
     $stmt->execute();
 
-    // Set fetch mode and debug output.
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    // Debugging: var_dump to check results, remove in production
-    var_dump($stmt->fetchAll());
-    // Remove die after debugging
-    // die;
-
+    // Check if any rows were returned
     if ($stmt->rowCount() > 0) {
-        $user = $stmt->fetchAll()[0];
-        $_SESSION['user'] = $user;
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);  // Fetch the user data as an associative array
+        $_SESSION['user'] = $user;  // Store user data in session
         header('Location: dashboard.php');
         exit; // Prevent further script execution after redirection
     } else {
@@ -38,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
