@@ -161,13 +161,16 @@ text-align: center;
 .dashboard_content{
     padding-top:50px;
    margin:0%;
-    background-color: #cdc5c7;
+    background-color: #ebe5e7;
 }
 .dashboard_content_main{
-    background: #efefef;
+    background: #ffffff;
     min-height:900px;
+    padding: 10px;
+    align-items: center;
 
 }
+
 #dashboardMainContainer {
     display: flex;
     height: calc(100vh - 60px); /* Full height minus the top navbar */
@@ -183,10 +186,11 @@ text-align: center;
     height: 100vh;
 }
 /* Content container */
+
 .dashboard_content_container {
     width: 80%; /* Content container takes up 80% initially */
     margin-left: 20%; /* Offset to align next to the sidebar */
-    background-color: #cdc5c7;
+    background-color: #d0cbce;
     padding: 20px;
     transition: width 0.3s ease, margin-left 0.3s ease; /* Smooth transition */
     overflow-y: auto;
@@ -243,4 +247,69 @@ text-align: center;
         opacity: 1;
         transform: translateY(0);
     }
+}
+/* Form container */
+#userAddFormContainer {
+    align-content: center;
+    width: 40%; /* Limit form width */
+    margin: 0 auto; /* Center horizontally */
+    padding: 5px 5px 5px 5px; /* Inner spacing */
+    background: #afa9a9; /* White background for readability */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border-radius: 8px; /* Rounded corners */
+
+}
+#userAddFormContainer h2{
+    font-size: large;
+    margin: 10px;
+    text-align: center;
+}
+/* Form elements */
+.appForm {
+    display: flex;
+    flex-direction: column; /* Stack inputs vertically */
+    gap: 7.5px; /* Add spacing between inputs */
+    align-items: center;
+}
+.appFormInputContainer {
+    display: flex;
+    flex-direction: column;
+
+}
+.appFormInputContainer label {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    margin-top: 10px;
+    color: #333; /* Text color */
+}
+.appFormInputContainer input {
+    font-size: 15px;
+    padding: 5px;
+    color: #333; /* Text color */
+    width: 220px;
+    height:17px;
+}
+.appFormInput {
+    width: 50%; /* Full width */
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px;
+}
+/* Button styling */
+.appBtn {
+    padding: 10px 15px;
+    background-color: #334c92; /* Primary color */
+    color: #fff; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.appBtn:hover {
+    background-color: #96a7e3; /* Darker shade on hover */
 }
