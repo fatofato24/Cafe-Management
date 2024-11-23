@@ -1,12 +1,11 @@
-<?php
-$servername = "10.7.154.47";
-$username = "cimsSF";
-$password = "fatiboi";
+ <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
 
 try {
-    $conn = new PDO("mysql:host=$servername;port=3306;dbname=inventory", $username, $password);
+    $conn = new PDO("mysql:host=$servername;dbname=inventory", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-echo "Connected successfully";
 } catch (Exception $e) {
     echo "Connection failed: " . $e->getMessage();
     exit();

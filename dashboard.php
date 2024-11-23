@@ -1,4 +1,3 @@
-
 <?php
 // Start the session.
 session_start();
@@ -8,7 +7,7 @@ $user = $_SESSION['user'];
 ?>
 
 
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>DashBoard</title>
@@ -26,25 +25,10 @@ $user = $_SESSION['user'];
     </header>
 
     <div id="dashboardMainContainer">
-        <div class="dashboard_sidebar" id="dashboard_sidebar">
-            <h3 class="dashboard_logo" id="dashboard_logo">CIMS</h3>
-            <div class="dashboard_sidebar_user" id="dashboard_sidebar_user">
-                <img src="images/hapi.jpg" alt="User image." id="User_image"/>
-                <span id="user_name">Sana</span>
-            </div>
-            <div class="dashboard_sidebar_menus">
-                <ul class="dashboard_menu_lists">
-                    <li class="menuActive">
-                        <a href=""><i class="fa fa-dashboard menuIcons"></i><span class="menuText">Dashboard</span></a>
-                    </li>
-                    <li>
-                        <a href=""><i class="fa fa-dashboard menuIcons"></i><span class="menuText">Dashboard</span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
+        <?php include('partials/app-sidebar.php')?>
+        
         <div class="dashboard_content_container" id="dashboard_content_container">
+            <?php include('partials/app-topnav.php')?>
             <div class="dashboard_content"></div>
             <div class="dashboard_content_main">
                 <!-- Main content goes here -->
@@ -52,75 +36,6 @@ $user = $_SESSION['user'];
         </div>
     </div>
 
-    <script>
-      var sideBarisOpen = true;
-
-const nav = document.getElementById('nav');
-const dashboard_sidebar = document.getElementById('dashboard_sidebar');
-const dashboard_content_container = document.getElementById('dashboard_content_container');
-const dashboard_logo = document.getElementById('dashboard_logo');
-const User_image = document.getElementById('User_image');
-const user_name = document.getElementById('user_name');
-
-nav.addEventListener('click', (event) => {
-    event.preventDefault();
-
-    if (sideBarisOpen) {
-        // Collapse sidebar and content container
-        dashboard_sidebar.style.width = '10%';  // Collapse the sidebar
-        dashboard_content_container.style.width = '90%'; // Expand content to occupy 90%
-        dashboard_content_container.style.marginLeft = '10%'; // Adjust margin-left
-
-
-        // Adjust logo and user image sizes
-        dashboard_logo.style.fontSize = '25px';
-        User_image.style.width = '30px';
-        User_image.style.height = '30px';
-        user_name.style.fontSize = '12px';
-
-        // Hide menu text and display only icons
-        const menuTextElements = document.getElementsByClassName('menuText');
-        for (let i = 0; i < menuTextElements.length; i++) {
-            menuTextElements[i].style.display = 'none'; // Hide the text
-        }
-
-        const menuIcons = document.getElementsByClassName('menuIcons');
-        for (let i = 0; i < menuIcons.length; i++) {
-            menuIcons[i].style.display = 'inline-block';
-        }
-
-        // Add collapsed class for additional styling
-        dashboard_sidebar.classList.add('collapsed');
-        sideBarisOpen = false;
-    } else {
-        // Expand sidebar and content container
-        dashboard_sidebar.style.width = '20%';  // Expand the sidebar
-        dashboard_content_container.style.width = '80%'; // Shrink content back to 80%
-        dashboard_content_container.style.marginLeft = '20%'; // Adjust margin-left
-
-        // Adjust logo and user image sizes
-        dashboard_logo.style.fontSize = '50px';
-        User_image.style.width = '50px';
-        User_image.style.height = '50px';
-        user_name.style.fontSize = '22px';
-
-        // Show menu text and icons
-        const menuTextElements = document.getElementsByClassName('menuText');
-        for (let i = 0; i < menuTextElements.length; i++) {
-            menuTextElements[i].style.display = 'inline-block'; // Show the text
-        }
-
-        const menuIcons = document.getElementsByClassName('menuIcons');
-        for (let i = 0; i < menuIcons.length; i++) {
-            menuIcons[i].style.display = 'inline-block'; // Show the icons
-        }
-
-        // Remove collapsed class for additional styling
-        dashboard_sidebar.classList.remove('collapsed');
-        sideBarisOpen = true;
-    }
-});
-
-    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
