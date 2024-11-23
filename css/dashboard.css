@@ -301,6 +301,7 @@ text-align: center;
 /* Button styling */
 .appBtn {
     padding: 10px 15px;
+    font-size: 20px;
     background-color: #334c92; /* Primary color */
     color: #fff; /* White text */
     border: none;
