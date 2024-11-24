@@ -314,3 +314,79 @@ text-align: center;
 .appBtn:hover {
     background-color: #96a7e3; /* Darker shade on hover */
 }
+
+
+/* User Add Page */
+
+div.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+div.column {
+  width: 100%;
+  padding: 0px 10px;
+}
+
+div.column-5 {
+  width: 41.67%;
+}
+
+div.column-7 {
+  width: 1  58.33%;
+}
+
+h1.section_header {
+  font-size: 21px;
+  color: #f685a1;
+  border-bottom: 1px solid #ffd7e1;
+  padding-bottom: 11px;
+  padding: 10px;
+  border-left: 4px solid #f690bf;
+  margin-bottom: 15px;
+}
+
+table, th, td {
+  border: 1px solid #cacaca;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+}
+
+table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  text-align: center;
+  background: #f4f6f9;
+}
+
+table td {
+  font-size: 13px;
+  text-align: center;
+  padding: 5px;
+}
+
+p.userCount {
+  text-align: right;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f685a1;
+}
+
+table tr:hover {
+    background-color: #f685a2; /* Light pink highlight on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+table th, table td {
+    padding: 10px; /* Add padding for better spacing */
+    border-radius: 5px; /* Rounded corners */
+}
+
+
+
