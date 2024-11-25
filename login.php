@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="loginInputsContainer">
                         <label for="password">Password</label>
                         <input placeholder="Password" name="password" id="password" type="password" required />
+                        <i id="togglePassword" class="fa fa-eye"></i> <!-- Eye icon to toggle visibility -->
                     </div>
                     <div class="loginButtonContainer">
                         <button type="submit">Login</button>

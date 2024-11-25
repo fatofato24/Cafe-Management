@@ -15,8 +15,8 @@
          <!-- Product Management -->
     <li class="limainMenu triggerMenu" data-submenu="product">
         <a href="javascript:void(0);" class="limainMenu_link">
-            <i class="fa fa-truck"></i>
-            <span class="menuText">Product Management</span>
+            <i class="fa fa-tag"></i>
+            <span class="menuText">Product</span>
             <i class="fa fa-angle-down MainMenuIcon"></i>
         </a>
         <ul class="subMenus" id="product">
@@ -29,7 +29,7 @@
     <li class="limainMenu triggerMenu" data-submenu="supplier">
         <a href="javascript:void(0);" class="limainMenu_link">
             <i class="fa fa-truck"></i>
-            <span class="menuText">Supplier Management</span>
+            <span class="menuText">Supplier</span>
             <i class="fa fa-angle-down MainMenuIcon"></i>
         </a>
         <ul class="subMenus" id="supplier">
@@ -42,12 +42,12 @@
     <li class="limainMenu triggerMenu" data-submenu="user">
         <a href="javascript:void(0);" class="limainMenu_link">
             <i class="fa fa-user-plus"></i>
-            <span class="menuText">User Management</span>
+            <span class="menuText">User</span>
             <i class="fa fa-angle-down MainMenuIcon"></i>
         </a>
         <ul class="subMenus" id="user">
-            <a href="#" class="subMenuLink"><i class="fa fa-circle"></i>View Users</a>
-            <a href="#" class="subMenuLink"><i class="fa fa-circle"></i>Add Users</a>
+            <a class="subMenuLink" href="./users-add.php"><i class="fa fa-circle"></i>View Users</a>
+            <a class="subMenuLink"><i class="fa fa-circle"></i>Add Users</a>
         </ul>
     </li>
     </ul>
