@@ -44,3 +44,35 @@ nav.addEventListener('click', (event) => {
         sideBarisOpen = true;
     }
 });
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (e) {
+        let clickedE1 = e.target;
+
+        // Find the closest parent li with the class 'limainMenu'
+        let parentLi = clickedE1.closest('.limainMenu');
+        if (parentLi && parentLi.classList.contains('triggerMenu')) {
+            let targetMenu = parentLi.dataset.submenu; // Get the target submenu's id
+            if (targetMenu) {
+                let submenu = document.getElementById(targetMenu);
+                let icon = parentLi.querySelector('.MainMenuIcon'); // Target the icon
+
+                // Toggle visibility of the submenu
+                if (submenu.style.display === 'block') {
+                    submenu.style.display = 'none'; // Hide the submenu
+                    if (icon) icon.classList.replace('fa-angle-down', 'fa-angle-left'); // Change icon to left
+                } else {
+                    // Hide all other submenus and reset icons before showing the current one
+                    document.querySelectorAll('.subMenus').forEach((menu) => {
+                        menu.style.display = 'none';
+                    });
+                    document.querySelectorAll('.MainMenuIcon').forEach((menuIcon) => {
+                        menuIcon.classList.replace('fa-angle-down', 'fa-angle-left'); // Reset all icons to left
+                    });
+
+                    submenu.style.display = 'block'; // Show the submenu
+                    if (icon) icon.classList.replace('fa-angle-left', 'fa-angle-down'); // Change icon to down
+                }
+            }
+        }
+    });
+});
