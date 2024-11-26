@@ -439,5 +439,18 @@ table th, table td {
     border-radius: 5px; /* Rounded corners */
 }
 
+#togglePassword {
+    font-size: 16px;
+    margin-top: 18px;
+    color: #666; /* Adjust icon color */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
 
+#togglePassword:hover {
+    color: #f685a2; /* Highlight on hover */
+}
 

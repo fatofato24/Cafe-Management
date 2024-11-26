@@ -61,18 +61,28 @@ document.addEventListener('DOMContentLoaded', function () {
                     submenu.style.display = 'none'; // Hide the submenu
                     if (icon) icon.classList.replace('fa-angle-down', 'fa-angle-left'); // Change icon to left
                 } else {
-                    // Hide all other submenus and reset icons before showing the current one
-                    document.querySelectorAll('.subMenus').forEach((menu) => {
-                        menu.style.display = 'none';
-                    });
-                    document.querySelectorAll('.MainMenuIcon').forEach((menuIcon) => {
-                        menuIcon.classList.replace('fa-angle-down', 'fa-angle-left'); // Reset all icons to left
-                    });
-
                     submenu.style.display = 'block'; // Show the submenu
                     if (icon) icon.classList.replace('fa-angle-left', 'fa-angle-down'); // Change icon to down
                 }
             }
         }
     });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const passwordField = document.querySelector('#password');
+    const togglePassword = document.querySelector('#togglePassword');
+
+    if (passwordField && togglePassword) {
+        togglePassword.addEventListener('click', function () {
+            // Toggle the input type between 'password' and 'text'
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+
+            // Toggle the icon class between 'fa-eye' and 'fa-eye-slash'
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
 });

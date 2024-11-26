@@ -7,11 +7,10 @@ if (!isset($_SESSION['user'])) {
 $_SESSION['table'] = 'users';
 $user = $_SESSION['user'];
 $users = include('database/show-users.php');
-
 // Initialize the $successMessage variable
-$successMessage = isset($_SESSION['successMessage']) ? $_SESSION['successMessage'] : '';
-unset($_SESSION['successMessage']);
+$successMessage = '';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,9 +18,9 @@ unset($_SESSION['successMessage']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/0c7a3095b5.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.4/css/bootstrap-dialog.min.css">
-     <style>
+    <style>
         /* Layout for User List and Create User Form */
         .row {
             display: flex;
@@ -153,8 +152,10 @@ unset($_SESSION['successMessage']);
             #userAddFormContainer {
                 max-width: 100%;
             }
+           
         }
     </style>
+    
 </head>
 <body>
     <div id="dashboardMainContainer">
@@ -175,12 +176,37 @@ unset($_SESSION['successMessage']);
                         <div class="column">
                             <h1 class="section_header"><i class="fa fa-plus"></i> Create User</h1>
                             <div id="userAddFormContainer">
-                                <form action="database/add.php" method="POST">
-                                    <input type="text" name="first_name" placeholder="First Name" required>
-                                    <input type="text" name="last_name" placeholder="Last Name" required>
-                                    <input type="email" name="email" placeholder="Email" required>
-                                    <input type="password" name="password" placeholder="Password" required>
-                                    <button type="submit">Add User</button>
+                                <h2>Add User</h2>
+                                <form action="database/add.php" method="POST" class="appForm">
+                                    <div class="appFormInputContainer">
+                                        <label for="first_name">First Name</label>
+                                        <input type="text" name="first_name" required>
+                                    </div>
+                                    <div class="appFormInputContainer">
+                                        <label for="last_name">Last Name</label>
+                                        <input type="text" name="last_name" required>
+                                    </div>
+                                    <div class="appFormInputContainer">
+                                        <label for="email">Email</label>
+                                        <input type="email" name="email" required>
+                                    </div>
+                                    <div class="appFormInputContainer" style="position: relative;">
+                                        <label for="password">Password</label>
+                                         <input 
+                                       type="password" 
+                                       name="password" 
+                                       id="password" 
+                                       class="appFormInput" 
+                                      required 
+                                        />
+                                        <i 
+                                         id="togglePassword" 
+                                         class="fa fa-eye" 
+                                         style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                                         </i>
+                                        </div>
+
+                                    <button type="submit" class="appBtn">Add User</button>
                                 </form>
                                 <?php if(isset($_SESSION['response'])): ?>
                                     <?php
@@ -214,12 +240,14 @@ unset($_SESSION['successMessage']);
                                     <?php foreach ($users as $index => $user): ?>
                                     <tr>
                                         <td><?= $index + 1 ?></td>
-                                        <td><?= htmlspecialchars($user['first_name']) ?></td>
-                                        <td><?= htmlspecialchars($user['last_name']) ?></td>
-                                        <td><?= htmlspecialchars($user['email']) ?></td>
-                                        <td class="action-buttons">
-                                            <button class="updateUser" data-id="<?= $user['id'] ?>">Edit</button>
-                                            <button class="deleteUser" data-id="<?= $user['id'] ?>" data-name="<?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>">Delete</button>
+                                        <td><?= $user['first_name'] ?></td>
+                                        <td><?= $user['last_name'] ?></td>
+                                        <td><?= $user['email'] ?></td>
+                                        <td>
+                                            <a href=""><i class="fa fa-pencil"></i> Edit</a>
+                                            <a href="#" class="deleteUser" data-userid="<?= $user['id'] ?>" data-fname="<?= $user['first_name'] ?>" data-lname="<?= $user['last_name'] ?>">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -227,59 +255,47 @@ unset($_SESSION['successMessage']);
                             </table>
                         </div>
                     </div>
-                </div>
+                </div>   
             </div>
         </div>
     </div>
-<script src="js/jquery/jquery-3.7.1.min.js"></script>
-<script>
-    // Delete User functionality
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('deleteUser')) {
-            const userId = e.target.dataset.id;
-            const name = e.target.dataset.name;
 
-            if (confirm(`Are you sure you want to delete ${name}?`)) {
-                $.post('database/delete-user.php', { user_id: userId }, function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }, 'json');
+    <script src="js/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('deleteUser')) {
+                e.preventDefault();
+                const userId = e.target.dataset.userid;
+                const fname = e.target.dataset.fname;
+                const lname = e.target.dataset.lname;
+                const fullName = `${fname} ${lname}`;
+
+                if (window.confirm(`Are you sure you want to delete ${fullName}?`)) {
+                    $.ajax({
+                        method: 'POST',
+                        url: 'database/delete-user.php',
+                        data: {
+                            user_id: userId,
+                            f_name: fname,
+                            l_name: lname
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success) {
+                                alert(data.message);
+                                location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        },
+                        error: function () {
+                            alert('An error occurred.');
+                        }
+                    });
+                }
             }
-        }
-
-        // Update User functionality
-        if (e.target.classList.contains('updateUser')) {
-            const userId = e.target.dataset.id;
-            const row = e.target.closest('tr');
-            const firstName = row.cells[1].textContent.trim();
-            const lastName = row.cells[2].textContent.trim();
-            const email = row.cells[3].textContent.trim();
-
-            const newFirstName = prompt("Enter First Name:", firstName);
-            const newLastName = prompt("Enter Last Name:", lastName);
-            const newEmail = prompt("Enter Email:", email);
-
-            if (newFirstName && newLastName && newEmail) {
-                $.post('database/update-user.php', {
-                    user_id: userId,
-                    f_name: newFirstName,
-                    l_name: newLastName,
-                    email: newEmail
-                }, function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }, 'json');
-            }
-        }
-    });
-</script>
+        });
+    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>

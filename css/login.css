@@ -176,3 +176,19 @@ button.appBtn {
 
 
 
+#togglePassword {
+    font-size: 16px;
+    margin-top: 13px;
+    color: #666; /* Adjust icon color */
+    position: absolute;
+    size: 20px;
+    top: 50%;
+    
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+#togglePassword:hover {
+    color: #f685a2; /* Highlight on hover */
+}
