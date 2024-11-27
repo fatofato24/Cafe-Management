@@ -136,7 +136,6 @@ ul.subMenus {
     width: 100%; /* Match the width of the parent menu item */
     z-index: 1000; /* Ensure it appears above other content */
     border-radius: 5px; /* Rounded corners */
-    
 }
 
 /* Submenu links */

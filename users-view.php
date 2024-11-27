@@ -154,19 +154,20 @@ $successMessage = '';
             }
            
         }
+        .dashboard.content_main{
+
+            border:20px solid #333;
+
+        }
     </style>
     
 </head>
 <body>
-<header>
-        <div class="dashboard_topNav">
-            <a href="#" id="nav"><i class="fa fa-navicon"></i></a>
-            <a href="database/logout.php" id="logoutBtn"><i class="fa fa-power-off"></i>Log-out</a>
-        </div>
-    </header>
     <div id="dashboardMainContainer">
-        <?php include('partials/app-sidebar.php'); ?> 
+        <?php include('partials/app-sidebar.php'); ?>
+               <?php include('partials/app-topnav.php'); ?>
         <div class="dashboard_content_container" id="dashboard_content_container">
+     
             <div class="dashboard_content">
                 <div class="dashboard_content_main">
                     <div class="row">
@@ -176,63 +177,79 @@ $successMessage = '';
                             <?= htmlspecialchars($successMessage) ?>
                         </div>
                         <?php endif; ?>
-
-                        <!-- Create User Form -->
+                        <!-- List of Users -->
                         <div class="column column-12">
-                            <h1 class="section_header"><i class="fa fa-plus"></i> Create User</h1>
-                            <div id="userAddFormContainer">
-                                <h2>Add User</h2>
-                                <form action="database/add.php" method="POST" class="appForm">
-                                    <div class="appFormInputContainer">
-                                        <label for="first_name">First Name</label>
-                                        <input type="text" name="first_name" required>
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="last_name">Last Name</label>
-                                        <input type="text" name="last_name" required>
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="email">Email</label>
-                                        <input type="email" name="email" required>
-                                    </div>
-                                    <div class="appFormInputContainer" style="position: relative;">
-                                        <label for="password">Password</label>
-                                         <input 
-                                       type="password" 
-                                       name="password" 
-                                       id="password" 
-                                       class="appFormInput" 
-                                      required 
-                                        />
-                                        <i 
-                                         id="togglePassword" 
-                                         class="fa fa-eye" 
-                                         style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
-                                         </i>
-                                        </div>
-
-                                    <button type="submit" class="appBtn">Add User</button>
-                                </form>
-                                <?php if(isset($_SESSION['response'])): ?>
-                                    <?php
-                                    $response_message = $_SESSION['response']['message'];
-                                    $is_success = $_SESSION['response']['success'];
-                                    ?>
-                                    <div class="responseMessage">
-                                        <p class="responseMessage <?= $is_success ? 'responseMessage_success' : 'responseMessage_error' ?>">
-                                            <?= $response_message ?>
-                                        </p>
-                                    </div>
-                                    <?php unset($_SESSION['response']); ?>
-                                <?php endif; ?>
-                            </div>
+                            <h1 class="section_header"><i class="fa fa-list"></i> List of Users</h1>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($users as $index => $user): ?>
+                                    <tr>
+                                        <td><?= $index + 1 ?></td>
+                                        <td><?= $user['first_name'] ?></td>
+                                        <td><?= $user['last_name'] ?></td>
+                                        <td><?= $user['email'] ?></td>
+                                        <td>
+                                            <a href=""><i class="fa fa-pencil"></i> Edit</a>
+                                            <a href="#" class="deleteUser" data-userid="<?= $user['id'] ?>" data-fname="<?= $user['first_name'] ?>" data-lname="<?= $user['last_name'] ?>">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>   
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('deleteUser')) {
+                e.preventDefault();
+                const userId = e.target.dataset.userid;
+                const fname = e.target.dataset.fname;
+                const lname = e.target.dataset.lname;
+                const fullName = `${fname} ${lname}`;
+
+                if (window.confirm(`Are you sure you want to delete ${fullName}?`)) {
+                    $.ajax({
+                        method: 'POST',
+                        url: 'database/delete-user.php',
+                        data: {
+                            user_id: userId,
+                            f_name: fname,
+                            l_name: lname
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success) {
+                                alert(data.message);
+                                location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        },
+                        error: function () {
+                            alert('An error occurred.');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
