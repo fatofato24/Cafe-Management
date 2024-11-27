@@ -136,6 +136,7 @@ ul.subMenus {
     width: 100%; /* Match the width of the parent menu item */
     z-index: 1000; /* Ensure it appears above other content */
     border-radius: 5px; /* Rounded corners */
+    
 }
 
 /* Submenu links */
@@ -156,7 +157,7 @@ ul.subMenus a i {
 
 /* Submenu hover effect */
 ul.subMenus a:hover {
-    background-color: #f685a2; /* Highlight on hover */
+    background-color: #c75270; /* Highlight on hover */
 }
 
 li.limainMenu.active ul.subMenus {
