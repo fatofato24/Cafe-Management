@@ -154,11 +154,6 @@ $successMessage = '';
             }
            
         }
-        .dashboard.content_main{
-
-            border:20px solid #333;
-
-        }
     </style>
     
 </head>
