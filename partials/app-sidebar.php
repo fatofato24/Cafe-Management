@@ -32,8 +32,8 @@
         <i class="fa fa-angle-down MainMenuIcon"></i>
     </a>
     <ul class="subMenus" id="product">
-        <a href="#" class="subMenuLink"><i class="fa fa-circle"></i> View Products</a>
-        <a href="#" class="subMenuLink"><i class="fa fa-circle"></i> Add Products</a>
+        <a href="./product-view.php" class="subMenuLink"><i class="fa fa-circle"></i> View Products</a>
+        <a href="./product-add.php" class="subMenuLink"><i class="fa fa-circle"></i> Add Products</a>
     </ul>
 </li>
 

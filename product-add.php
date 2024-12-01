@@ -4,18 +4,26 @@ if (!isset($_SESSION['user'])) {
     header('location: login.php');
     exit;
 }
-$_SESSION['table'] = 'users';
-$_SESSION['redirect_to'] = 'users-add.php';
+$_SESSION['table'] = 'products';
+$_SESSION['redirect_to'] = 'product-add.php';
+
 $user = $_SESSION['user'];
-$users = include('database/show-users.php');
-// Initialize the $successMessage variable
-$successMessage = '';
+
+// Define $successMessage at the beginning
+$successMessage = ''; // Initialize the variable
+
+if (isset($_SESSION['response'])) {
+    $response_message = $_SESSION['response']['message'];
+    $is_success = $_SESSION['response']['success'];
+    $successMessage = $response_message; // Set the success message
+    unset($_SESSION['response']); // Clear session response after displaying the message
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Add User</title>
+    <title>Add Product</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/dashboard.css">
@@ -178,43 +186,25 @@ $successMessage = '';
                         </div>
                         <?php endif; ?>
 
-                        <!-- Create User Form -->
+                        <!-- Create Product Form -->
                         <div class="column column-12">
-                            <h1 class="section_header"><i class="fa fa-plus"></i> Create User</h1>
+                            <h1 class="section_header"><i class="fa fa-plus"></i> Create Product</h1>
                             <div id="userAddFormContainer">
-                                <h2>Add User</h2>
+                                <h2>Add Product</h2>
                                 <form action="database/add.php" method="POST" class="appForm">
                                     <div class="appFormInputContainer">
-                                        <label for="first_name">First Name</label>
-                                        <input type="text" name="first_name" required>
+                                        <label for="product_name">Product Name</label>
+                                        <input type="text" name="product_name" placeholder="Enter product name..."required>
                                     </div>
                                     <div class="appFormInputContainer">
-                                        <label for="last_name">Last Name</label>
-                                        <input type="text" name="last_name" required>
+                                        <label for="description">Description</label>
+                                        <textarea class="appFormInput productTextAreaInput" id="description" placeholder="Enter product description..." name="description"></textarea>
                                     </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="email">Email</label>
-                                        <input type="email" name="email" required>
-                                    </div>
-                                    <div class="appFormInputContainer" style="position: relative;">
-                                        <label for="password">Password</label>
-                                         <input 
-                                       type="password" 
-                                       name="password" 
-                                       id="password" 
-                                       class="appFormInput" 
-                                      required 
-                                        />
-                                        <i 
-                                         id="togglePassword" 
-                                         class="fa fa-eye" 
-                                         style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
-                                         </i>
-                                        </div>
 
-                                    <button type="submit" class="appBtn">Add User</button>
+                                    <button type="submit" class="appBtn">Add Product</button>
                                 </form>
                                 <?php if (isset($_SESSION['response'])): ?>
+
                                     <?php
                                     $response_message = $_SESSION['response']['message'];
                                     $is_success = $_SESSION['response']['success'];

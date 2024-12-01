@@ -454,3 +454,9 @@ table th, table td {
     color: #f685a2; /* Highlight on hover */
 }
 
+.productTextAreaInput {
+    width: 100%;
+    height: 75px;
+    border-radius: 5px;
+    border-color: #d7d7d7;
+}
