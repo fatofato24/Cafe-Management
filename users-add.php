@@ -214,7 +214,7 @@ $successMessage = '';
 
                                     <button type="submit" class="appBtn">Add User</button>
                                 </form>
-                                <?php if (isset($_SESSION['response'])): ?>
+                                <?php if(isset($_SESSION['response'])): ?>
                                     <?php
                                     $response_message = $_SESSION['response']['message'];
                                     $is_success = $_SESSION['response']['success'];

@@ -62,7 +62,7 @@ $users = include('database/show-users.php');
     <div id="dashboardMainContainer">
         <?php include('partials/app-sidebar.php'); ?>
         <?php include('partials/app-topnav.php'); ?>
-        <div class="dashboard_content_container">
+        <div class="dashboard_content_container" id="dashboard_content_container">
             <div class="dashboard_content">
                 <div class="dashboard_content_main">
                     <div class="row">
@@ -110,7 +110,7 @@ $users = include('database/show-users.php');
             </div>
         </div>
     </div>
-
+    <script src="js/script.js"></script>
 <script src="js/jquery/jquery-3.7.1.min.js"></script>
 <script>
 // Handle Edit (Update User)

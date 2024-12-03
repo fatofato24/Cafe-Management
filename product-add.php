@@ -9,7 +9,7 @@ $_SESSION['redirect_to'] = 'product-add.php';
 
 $user = $_SESSION['user'];
 
-// Define $successMessage at the beginning
+// Define $successMessage at the beginnin
 $successMessage = ''; // Initialize the variable
 
 if (isset($_SESSION['response'])) {
@@ -191,7 +191,7 @@ if (isset($_SESSION['response'])) {
                             <h1 class="section_header"><i class="fa fa-plus"></i> Create Product</h1>
                             <div id="userAddFormContainer">
                                 <h2>Add Product</h2>
-                                <form action="database/add.php" method="POST" class="appForm">
+                                <form action="database/productadd.php" method="POST" class="appForm">
                                     <div class="appFormInputContainer">
                                         <label for="product_name">Product Name</label>
                                         <input type="text" name="product_name" placeholder="Enter product name..."required>
