@@ -23,7 +23,7 @@ if (isset($_SESSION['response'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Add Product</title>
+    <title>Add Supplier</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/dashboard.css">
@@ -188,22 +188,36 @@ if (isset($_SESSION['response'])) {
 
                         <!-- Create Product Form -->
                         <div class="column column-12">
-                            <h1 class="section_header"><i class="fa fa-plus"></i> Create Product</h1>
+                            <h1 class="section_header"><i class="fa fa-plus"></i> Create Supplier</h1>
                             <div id="userAddFormContainer">
                                 <h2>Add Product</h2>
-                                <form action="database/productadd.php" method="POST" class="appForm" enctype="multipart/form-data">
+                                <form action="database/productadd.php" method="POST" class="appForm">
                                     <div class="appFormInputContainer">
-                                        <label for="product_name">Product Name</label>
-                                        <input type="text" class="appFormInput" name="product_name" placeholder="Enter product name..."required>
+                                        <label for="product_name">Supplier Name</label>
+                                        <input type="text" name="product_name" placeholder="Enter product name..."required>
                                     </div>
                                     <div class="appFormInputContainer">
-                                        <label for="description">Description</label>
+                                        <label for="description">Location</label>
                                         <textarea class="appFormInput productTextAreaInput" id="description" placeholder="Enter product description..." name="description"></textarea>
                                     </div>
+
                                     <div class="appFormInputContainer">
-                                        <label for="product_name">Product Image</label>
-                                        <input type="file" class="appFormInput" name="img"/>
+                                        <label for="description">Email</label>
+                                        <select name="suppliers[]" id="suppliersSelect" multiple="">
+                                            <option value="">Select Supplier</option>
+                                            <?php
+                                            $show_table='suppliers';
+                                            $suppliers=include('database/show.php');
+
+                                            foreach($suppliers as $supplier)
+                                            {
+                                                echo "<option value='"  $supplier['id']   "'> " $supplier['supplier_name'] "<\option>";
+                                            }
+                                            ?>
+
+                                        </select>
                                     </div>
+
 
                                     <button type="submit" class="appBtn">Add Product</button>
                                 </form>
