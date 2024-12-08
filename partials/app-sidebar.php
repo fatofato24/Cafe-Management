@@ -1,3 +1,8 @@
+<?php
+$user = $_SESSION['user'];
+?>
+
+
 <div class="dashboard_sidebar" id="dashboard_sidebar">
     <h3 class="dashboard_logo" id="dashboard_logo">CIMS</h3>
     <div class="dashboard_sidebar_user" id="dashboard_sidebar_user">
@@ -45,7 +50,7 @@
     </a>
     <ul class="subMenus" id="supplier">
         <a href="#" class="subMenuLink"><i class="fa fa-circle"></i> View Suppliers</a>
-        <a href="./supplier-add.php" class="subMenuLink"><i class="fa fa-circle"></i> Add Suppliers</a>
+        <a href="#" class="subMenuLink"><i class="fa fa-circle"></i> Add Suppliers</a>
     </ul>
 </li>
 
