@@ -460,8 +460,47 @@ table th, table td {
     border-radius: 5px;
     border-color: #d7d7d7;
 }
+<<<<<<< Updated upstream
 
 .productImages {
   width: 100px;
   height: 100px;
 }
+=======
+#suppliersSelect {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #333; /* Dark text color for better readability */
+    background-color: #f9f9f9; /* Light background color */
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    appearance: none; /* Remove default arrow for better custom design */
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+#suppliersSelect:hover {
+    border-color: #f685a2; /* Pink border on hover */
+    background-color: #fff; /* Slightly brighter background */
+}
+
+#suppliersSelect:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #f685a2; /* Pink border for focus */
+    box-shadow: 0px 0px 6px rgba(246, 133, 162, 0.5); /* Soft focus shadow */
+}
+
+.appFormInputContainer {
+    margin-bottom: 20px;
+}
+
+.appFormInputContainer label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333; /* Dark text color */
+}
+>>>>>>> Stashed changes

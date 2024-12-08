@@ -201,6 +201,23 @@ if (isset($_SESSION['response'])) {
                                         <textarea class="appFormInput productTextAreaInput" id="description" placeholder="Enter product description..." name="description"></textarea>
                                     </div>
                                     <div class="appFormInputContainer">
+    <label for="suppliersSelect">Suppliers</label>
+    <select name="suppliers[]" id="suppliersSelect" multiple> <!-- Allow multiple selections -->
+        <option value="">Select Supplier</option>
+        
+        <?php
+        // Assuming session table management and `show-users.php` correctly fetch suppliers.
+        $show_table = 'suppliers';
+        $suppliers = include('database/show-users.php');
+
+        // Generate options dynamically from the suppliers array.
+        foreach ($suppliers as $supplier) {
+            echo "<option value='" . htmlspecialchars($supplier['id']) . "'>" . htmlspecialchars($supplier['supplier_name']) . "</option>";
+        }
+        ?>
+    </select>
+</div>
+                                    <div class="appFormInputContainer">
                                         <label for="product_name">Product Image</label>
                                         <input type="file" class="appFormInput" name="img"/>
                                     </div>

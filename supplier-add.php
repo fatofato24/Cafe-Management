@@ -211,7 +211,7 @@ if (isset($_SESSION['response'])) {
 
                                             foreach($suppliers as $supplier)
                                             {
-                                                echo "<option value='"  $supplier['id']   "'> " $supplier['supplier_name'] "<\option>";
+                                                echo "<option value='" . $supplier['id']   ."'> " .$supplier['supplier_name'] ."<\option>";
                                             }
                                             ?>
 

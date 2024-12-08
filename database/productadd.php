@@ -17,32 +17,25 @@ $image_name = null;
 
 // Handle file upload
 if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
-    echo ("File upload error: " . $_FILES['img']['error']);
     $target_dir = "../uploads/products/";
-    if (!is_dir('../uploads/products/')) {
-        mkdir('../uploads/products/', 0755, true);
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
     }
+
     $file_data = $_FILES['img'];
     $file_name = $file_data['name'];
     $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
     $file_name = 'product_' . time() . '.' . $file_ext;
 
     $check = getimagesize($file_data['tmp_name']);
-    if (!$check) {
-        echo "Invalid image file.";
-        exit;
-    }
     if ($check) {
         if (move_uploaded_file($_FILES['img']['tmp_name'], $target_dir . $file_name)) {
             $image_name = $file_name;
-        } else {
-            $image_name = null;
         }
     }
 }
 
-
-// Prepare SQL query
+// Insert product into `products` table
 try {
     include('connection.php');
 
@@ -52,18 +45,38 @@ try {
     }
 
     // Insert into products table
-    $sql = "INSERT INTO products (product_name, description,img, created_by, created_at, updated_at) 
-            VALUES (:product_name, :description,:img, :created_by, :created_at, :updated_at)";
+    $sql = "INSERT INTO products (product_name, description, img, created_by, created_at, updated_at) 
+            VALUES (:product_name, :description, :img, :created_by, :created_at, :updated_at)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':product_name', $product_name);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':img', $image_name); 
-    $stmt->bindParam(':created_by', $user_id);  // Valid user ID
+    $stmt->bindParam(':created_by', $user_id);  
     $stmt->bindParam(':created_at', $created_at);
     $stmt->bindParam(':updated_at', $updated_at);
 
     $stmt->execute();
+
+    // Get the inserted product ID
+    $product_id = $conn->lastInsertId();
+
+    // Insert the selected suppliers into the `productsuppliers` table
+    if (isset($_POST['suppliers']) && !empty($_POST['suppliers'])) {
+        $suppliers = $_POST['suppliers']; // Array of selected supplier IDs
+
+        foreach ($suppliers as $supplier_id) {
+            // Insert each supplier-product relationship into `productsuppliers`
+            $sql_supplier = "INSERT INTO productsuppliers (product, supplier, created_at, updated_at) 
+                             VALUES (:product_id, :supplier_id, :created_at, :updated_at)";
+            $stmt_supplier = $conn->prepare($sql_supplier);
+            $stmt_supplier->bindParam(':product_id', $product_id);
+            $stmt_supplier->bindParam(':supplier_id', $supplier_id);
+            $stmt_supplier->bindParam(':created_at', $created_at);
+            $stmt_supplier->bindParam(':updated_at', $updated_at);
+            $stmt_supplier->execute();
+        }
+    }
 
     // Response
     $response = [

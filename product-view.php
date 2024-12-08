@@ -4,6 +4,7 @@ if (!isset($_SESSION['user'])) {
     header('location: login.php');
     exit;
 }
+<<<<<<< Updated upstream
 
 // Fetch products directly from the database using PDO
 require_once('database/connection.php');
@@ -16,6 +17,11 @@ try {
 } catch (PDOException $e) {
     die("Database query failed: " . $e->getMessage());
 }
+=======
+$show_table = 'users';
+$user = $_SESSION['user'];
+$users = include('database/show-users.php');
+>>>>>>> Stashed changes
 ?>
 
 <!DOCTYPE html>

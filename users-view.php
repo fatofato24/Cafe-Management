@@ -4,7 +4,7 @@ if (!isset($_SESSION['user'])) {
     header('location: login.php');
     exit;
 }
-$_SESSION['table'] = 'users';
+$show_table = 'users';
 $user = $_SESSION['user'];
 
 $_SESSION['table']='users';
