@@ -460,3 +460,8 @@ table th, table td {
     border-radius: 5px;
     border-color: #d7d7d7;
 }
+
+.productImages {
+  width: 100px;
+  height: 100px;
+}

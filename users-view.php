@@ -6,7 +6,9 @@ if (!isset($_SESSION['user'])) {
 }
 $_SESSION['table'] = 'users';
 $user = $_SESSION['user'];
-$users = include('database/show-users.php');
+
+$_SESSION['table']='users';
+$users = include('database/show.php');
 ?>
 
 <!DOCTYPE html>
@@ -75,6 +77,8 @@ $users = include('database/show-users.php');
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email</th>
+                                        <th>Created At</th>
+                                        <th>Updated At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -85,6 +89,8 @@ $users = include('database/show-users.php');
                                         <td><?= $user['first_name'] ?></td>
                                         <td><?= $user['last_name'] ?></td>
                                         <td><?= $user['email'] ?></td>
+                                        <td><?= date('M d,Y @ h:i:s A', strtotime($user['created_at'])) ?></td>
+                                        <td><?= date('M d,Y @ h:i:s A', strtotime($user['updated_at'])) ?></td>
                                         <td>
                                             <a href="#" class="updateUser" 
                                                data-userid="<?= $user['id'] ?>" 
