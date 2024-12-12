@@ -190,36 +190,23 @@ if (isset($_SESSION['response'])) {
                         <div class="column column-12">
                             <h1 class="section_header"><i class="fa fa-plus"></i> Create Supplier</h1>
                             <div id="userAddFormContainer">
-                                <h2>Add Product</h2>
-                                <form action="database/productadd.php" method="POST" class="appForm">
+                                <h2>Add Supplier</h2>
+                                <form action="database/supplieradd.php" method="POST" class="appForm" enctype="multipart/form_data">
                                     <div class="appFormInputContainer">
-                                        <label for="product_name">Supplier Name</label>
-                                        <input type="text" name="product_name" placeholder="Enter product name..."required>
+                                        <label for="supplier_name">Supplier Name</label>
+                                        <input type="text" placeholder="Enter supplier name..." name="supplier_name" required>
                                     </div>
                                     <div class="appFormInputContainer">
-                                        <label for="description">Location</label>
-                                        <textarea class="appFormInput productTextAreaInput" id="description" placeholder="Enter product description..." name="description"></textarea>
+                                        <label for="supplier_location">Location</label>
+                                        <input class="appFormInput productTextAreaInput" id="supplier_location" placeholder="Enter product supplier location ..." name="supplier_location">
                                     </div>
 
                                     <div class="appFormInputContainer">
-                                        <label for="description">Email</label>
-                                        <select name="suppliers[]" id="suppliersSelect" multiple="">
-                                            <option value="">Select Supplier</option>
-                                            <?php
-                                            $show_table='suppliers';
-                                            $suppliers=include('database/show.php');
+                                        <label for="email">Email</label>
+                                        <input type="test" class="appFormInput" id="email" placeholder="Enter supplier email...." name="email">
 
-                                            foreach($suppliers as $supplier)
-                                            {
-                                                echo "<option value='" . $supplier['id']   ."'> " .$supplier['supplier_name'] ."<\option>";
-                                            }
-                                            ?>
-
-                                        </select>
                                     </div>
-
-
-                                    <button type="submit" class="appBtn">Add Product</button>
+                                    <button type="submit" class="appBtn">Add Supplier</button>
                                 </form>
                                 <?php if (isset($_SESSION['response'])): ?>
 

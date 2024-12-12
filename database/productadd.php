@@ -62,21 +62,34 @@ try {
     $product_id = $conn->lastInsertId();
 
     // Insert the selected suppliers into the `productsuppliers` table
-    if (isset($_POST['suppliers']) && !empty($_POST['suppliers'])) {
-        $suppliers = $_POST['suppliers']; // Array of selected supplier IDs
+   // Insert the selected suppliers into the `productsuppliers` table
+if (isset($_POST['suppliers']) && !empty($_POST['suppliers'])) {
+    $suppliers = $_POST['suppliers']; // Array of selected supplier IDs
 
-        foreach ($suppliers as $supplier_id) {
-            // Insert each supplier-product relationship into `productsuppliers`
-            $sql_supplier = "INSERT INTO productsuppliers (product, supplier, created_at, updated_at) 
-                             VALUES (:product_id, :supplier_id, :created_at, :updated_at)";
-            $stmt_supplier = $conn->prepare($sql_supplier);
-            $stmt_supplier->bindParam(':product_id', $product_id);
-            $stmt_supplier->bindParam(':supplier_id', $supplier_id);
-            $stmt_supplier->bindParam(':created_at', $created_at);
-            $stmt_supplier->bindParam(':updated_at', $updated_at);
-            $stmt_supplier->execute();
+    foreach ($suppliers as $supplier_id) {
+        // Ensure supplier_id is valid
+        if (!is_numeric($supplier_id)) {
+            continue; // Skip invalid supplier IDs
+        }
+
+        // Insert each supplier-product relationship into `productsuppliers`
+        $sql_supplier = "INSERT INTO productsuppliers (product, supplier, created_at, updated_at) 
+                         VALUES (:product_id, :supplier_id, :created_at, :updated_at)";
+        $stmt_supplier = $conn->prepare($sql_supplier);
+
+        $stmt_supplier->bindParam(':product_id', $product_id);
+        $stmt_supplier->bindParam(':supplier_id', $supplier_id);
+        $stmt_supplier->bindParam(':created_at', $created_at);
+        $stmt_supplier->bindParam(':updated_at', $updated_at);
+
+        // Check for errors in the supplier insert
+        if (!$stmt_supplier->execute()) {
+            $error = $stmt_supplier->errorInfo();
+            echo "Error inserting supplier for product: " . $error[2];
         }
     }
+}
+
 
     // Response
     $response = [

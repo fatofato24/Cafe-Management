@@ -460,13 +460,11 @@ table th, table td {
     border-radius: 5px;
     border-color: #d7d7d7;
 }
-<<<<<<< Updated upstream
 
 .productImages {
   width: 100px;
   height: 100px;
 }
-=======
 #suppliersSelect {
     display: block;
     width: 100%;
@@ -503,4 +501,3 @@ table th, table td {
     margin-bottom: 5px;
     color: #333; /* Dark text color */
 }
->>>>>>> Stashed changes
