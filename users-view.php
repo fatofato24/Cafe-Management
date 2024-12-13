@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 $show_table = 'users';
 $user = $_SESSION['user'];
-
 $_SESSION['table']='users';
 $users = include('database/show.php');
 ?>

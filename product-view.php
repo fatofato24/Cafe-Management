@@ -17,10 +17,12 @@ try {
     die("Database query failed: " . $e->getMessage());
 }
 
+
 // User-related logic
 $show_table = 'users';
 $user = $_SESSION['user'];
 $users = include('database/show.php');
+
 ?>
 
 

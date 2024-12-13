@@ -4,7 +4,7 @@ if (!isset($_SESSION['user'])) {
     header('location: login.php');
     exit;
 }
-$_SESSION['table'] = 'products';
+$show_table = 'products';
 $_SESSION['redirect_to'] = 'product-add.php';
 
 $user = $_SESSION['user'];
@@ -208,7 +208,7 @@ if (isset($_SESSION['response'])) {
         <?php
         // Assuming session table management and `show-users.php` correctly fetch suppliers.
         $show_table = 'suppliers';
-        $suppliers = include('database/show-users.php');
+        $suppliers = include('database/show.php');
 
         // Generate options dynamically from the suppliers array.
         foreach ($suppliers as $supplier) {
