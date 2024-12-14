@@ -123,10 +123,65 @@ try {
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
     <script>
-    // Edit and Delete functionality to be added here (if needed)
+    // Handle Edit (Update Supplier)
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.updateSupplier')) {
+            e.preventDefault();
+            const button = e.target.closest('.updateSupplier');
+            const supplierId = button.dataset.supplierid;
+            const supplierName = button.dataset.suppliername;
+            const location = button.dataset.location;
+            const email = button.dataset.email;
+
+            // Prompt to edit supplier details
+            const newSupplierName = prompt("Enter Supplier Name:", supplierName);
+            const newLocation = prompt("Enter Location:", location);
+            const newEmail = prompt("Enter Email:", email);
+
+            if (newSupplierName && newLocation && newEmail) {
+                $.post('database/update-supplier.php', {
+                    supplier_id: supplierId,
+                    supplier_name: newSupplierName,
+                    location: newLocation,
+                    email: newEmail
+                }, function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }, 'json').fail(function() {
+                    alert('Error processing request. Please try again.');
+                });
+            }
+        }
+    });
+
+    // Handle Delete Supplier
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.deleteSupplier')) {
+            e.preventDefault();
+            const button = e.target.closest('.deleteSupplier');
+            const supplierId = button.dataset.supplierid;
+            const supplierName = button.dataset.suppliername;
+
+            if (confirm(`Are you sure you want to delete ${supplierName}?`)) {
+                $.post('database/delete-supplier.php', { supplier_id: supplierId }, function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }, 'json').fail(function() {
+                    alert('Error processing request. Please try again.');
+                });
+            }
+        }
+    });
     </script>
 </body>
 </html>

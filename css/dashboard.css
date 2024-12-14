@@ -501,3 +501,70 @@ table th, table td {
     margin-bottom: 5px;
     color: #333; /* Dark text color */
 }
+
+.orderProductBtn {
+  background: #d93f65;
+  color: #fff;
+}
+
+.orderBtn {
+  height: 33px;
+  border: none;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.submitOrderProductBtn {
+  background: #323232;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.marginTop20 {
+  margin-top: 20px;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+#orderProductLists {
+  margin-top: 20px;
+}
+
+.productNameSelect {
+  font-size: 15px;
+  border: none;
+  background: #fafafa;
+  padding: 3px 17px;
+  border: 1px solid #b0b0b0;
+  border-radius: 2px;
+}
+
+div.orderProductRow {
+  padding: 6px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 25px;
+}
+
+#orderProductLists .row {
+  margin: 0px !important;
+}
+
+.suppliersRows .supplierName {
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #alala1; 
+  text-transform: uppercase;
+}
+
+.suppliersRows .row {
+  padding: 8px 0px;
+}
+
+
+
+
+
