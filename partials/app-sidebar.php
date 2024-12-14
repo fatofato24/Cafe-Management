@@ -39,6 +39,7 @@ $user = $_SESSION['user'];
     <ul class="subMenus" id="product">
         <a href="./product-view.php" class="subMenuLink"><i class="fa fa-circle"></i> View Products</a>
         <a href="./product-add.php" class="subMenuLink"><i class="fa fa-circle"></i> Add Products</a>
+        <a href="./product-order.php" class="subMenuLink"><i class="fa fa-circle"></i> Order Product</a>
     </ul>
 </li>
 
