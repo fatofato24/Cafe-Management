@@ -2,8 +2,7 @@
 
 include('connection.php');
 
-$table_name=$show_table;
-$stmt = $conn->prepare("SELECT * FROM $table_name ORDER BY created_at ASC");
+$stmt = $conn->prepare("SELECT * FROM users ORDER BY created_at ASC");
 $stmt->execute();
 
 $stmt->setFetchMode(PDO::FETCH_ASSOC);

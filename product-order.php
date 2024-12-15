@@ -4,12 +4,12 @@ if (!isset($_SESSION['user'])) {
     header('location: login.php');
     exit;
 }
+
 $show_table = 'products';
-$products=include('database/show.php');
-$products= json_encode($products);
+$products = include('database/show_products.php');  // Ensure this returns the products array from your database
+$products = json_encode($products);  // Convert to JSON format for JavaScript
 
-
-// Define $successMessage at the beginnin
+// Define $successMessage at the beginning
 $successMessage = ''; // Initialize the variable
 
 if (isset($_SESSION['response'])) {
@@ -161,113 +161,117 @@ if (isset($_SESSION['response'])) {
             #userAddFormContainer {
                 max-width: 100%;
             }
-           
         }
     </style>
-    
 </head>
 <body>
 <header>
-        <div class="dashboard_topNav">
-            <a href="#" id="nav"><i class="fa fa-navicon"></i></a>
-            <a href="database/logout.php" id="logoutBtn"><i class="fa fa-power-off"></i>Log-out</a>
-        </div>
-    </header>
-    <div id="dashboardMainContainer">
-        <?php include('partials/app-sidebar.php'); ?> 
-        <div class="dashboard_content_container" id="dashboard_content_container">
-            <div class="dashboard_content">
-                <div class="dashboard_content_main">
-                    <div class="row">
-                        <!-- Success Message -->
-                        <?php if ($successMessage): ?>
+    <div class="dashboard_topNav">
+        <a href="#" id="nav"><i class="fa fa-navicon"></i></a>
+        <a href="database/logout.php" id="logoutBtn"><i class="fa fa-power-off"></i>Log-out</a>
+    </div>
+</header>
+
+<div id="dashboardMainContainer">
+    <?php include('partials/app-sidebar.php'); ?>
+    <div class="dashboard_content_container" id="dashboard_content_container">
+        <div class="dashboard_content">
+            <div class="dashboard_content_main">
+                <div class="row">
+                    <!-- Success Message -->
+                    <?php if ($successMessage): ?>
                         <div class="success-message">
                             <?= htmlspecialchars($successMessage) ?>
                         </div>
-                        <?php endif; ?>
+                    <?php endif; ?>
 
-                        <!-- Order Product Form -->
-                        <di v class="column column-12">
-                            <h1 class="section_header"><i class="fa fa-plus"></i> Order Product</h1>
-                            <div>
-                                <div class="alignRight">
-                                    <button class="orderBtn orderProductBtn">Order Product</button>
-                                </div>
-                                <div>
-                                    <div id="orderProductLists">
-                                          <div class="orderProductRow">
-                                        <div>
-                                            <label for="product_name">PRODUCT</label>
-                                            <select name="product_name" class="productNameSelect" id="product_name">
-                                                <option value="">Product 1</option>
-                                            </select>
-                                        </div>
+                    <!-- Order Product Form -->
+                    <div class="column column-12">
+                        <h1 class="section_header"><i class="fa fa-plus"></i> Order Product</h1>
+                        <div>
+                            <div class="alignRight">
+                                <button class="orderBtn orderProductBtn" id="orderProductBtn">Add Another Product</button>
+                            </div>
+                            <div id="orderProductLists"></div>
 
-                                        <div class="supplierRows">
-                                            <div>
-                                            <p class="supplierName">Supplier 1</p>
-                                            
-                                        </div>
-
-                                        <div>
-                                            <label for="product_name">Quantity: </label>
-                                            <input type="number" class="appFormInput" id="quantity" placeholder="Enter quantity..." name="quantity" />
-                                        </div>
-
-                                        <div>
-                                            <p class="supplierName">Supplier 2</p>
-                                            
-                                        </div>
-
-                                        <div>
-                                            <label for="product_name">Quantity: </label>
-                                            <input type="number" class="appFormInput" id="quantity" placeholder="Enter quantity..." name="quantity" />
-                                        </div>
-
-                                        <div>
-                                            <p class="supplierName">Supplier 3</p>
-                                            
-                                        </div>
-
-                                        <div>
-                                            <label for="product_name">Quantity: </label>
-                                            <input type="number" class="appFormInput" id="quantity" placeholder="Enter quantity..." name="quantity" />
-                                        </div>
-
-
-                                        </div>
-
-                                        <div class="alignRight marginTop20">
-                                    <button class="orderBtn submitOrderProductBtn">Submit Order</button>
-                                </div>
-
-                                        
-
-
-                                    </div>
-                                        
-                                    </div>
-                                    
-
-
-                                  
-                                </div>
-                                
-                                
+                            <div class="alignRight marginTop20">
+                                <button class="orderBtn submitOrderProductBtn">Submit Order</button>
                             </div>
                         </div>
                     </div>
-                </div>   
+                </div>
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
-    <script src="js/jquery/jquery-3.7.1.min.js"></script>
+</div>
 
-    <script>
-        var products=<?= $products?>;
+<script src="js/script.js"></script>
+<script src="js/jquery/jquery-3.7.1.min.js"></script>
 
-        console.log(products);
-    </script>
+<script>
+    var products = <?= $products ?>;  // This loads products from PHP into JS
+
+    function script() {
+        let productOptionsTemplate = '\
+<div>\
+    <label for="product_name">PRODUCT NAME</label>\
+    <select name="product_name" class="productNameSelect" id="product_name">\
+        <option value="">Select Product</option>\
+        INSERTPRODUCTHERE\
+    </select>\
+</div>';
+
+        this.initialize = function() {
+            this.registerEvents();  // Register the event listeners
+            this.renderProductOptions();  // Initially render the products into the dropdown
+        };
+
+        this.renderProductOptions = function() {
+            let optionHtml = '';
+            // Loop through the products array and create option elements
+            products.forEach((product) => {
+                optionHtml += `<option value="${product.id}">${product.product_name}</option>`;
+            });
+
+            // Replace INSERTPRODUCTHERE with the actual options
+            productOptions = productOptionsTemplate.replace('INSERTPRODUCTHERE', optionHtml);
+        };
+
+        this.registerEvents = function() {
+            document.addEventListener('click', function(e) {
+                let targetElement = e.target;
+
+                // Add new product order row
+                if (targetElement.id === 'orderProductBtn') {
+                    let orderProductListsContainer = document.getElementById('orderProductLists');
+
+                    // Add a new order product row with the product dropdown
+                    orderProductListsContainer.innerHTML += '\
+                        <div class="orderProductRow">\
+                            ' + productOptions + '\
+                            <div class="suppliersRows"></div>\
+                        </div>';
+                }
+            });
+
+            document.addEventListener('change', function(e) {
+                let targetElement = e.target;
+                if (targetElement.classList.contains('productNameSelect')) {
+                    let productId = targetElement.value;
+
+                    if (!productId.length) {
+                        console.log('No product selected');
+                    } else {
+                        console.log('Product selected:', productId);
+                        // Further logic for displaying product details, etc.
+                    }
+                }
+            });
+        };
+    }
+
+    // Initialize the script
+    (new script()).initialize();
+</script>
 </body>
 </html>
