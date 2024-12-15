@@ -122,8 +122,7 @@
     font-size: 19px;
     margin-left: auto; /* Push the icon to the far right */
 }
-
-/* Submenu styling */
+/* Submenu container */
 ul.subMenus {
     list-style: none; /* Remove bullet points */
     margin: 0;
@@ -146,9 +145,10 @@ ul.subMenus a {
     color: #fff; /* Default text color */
     font-size: 16px; /* Adjust font size */
     text-decoration: none; /* Remove underline */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Smooth hover effect */
 }
 
+/* Submenu icons */
 ul.subMenus a i {
     margin-right: 10px; /* Space between icon and text */
     font-size: 14px; /* Submenu icon size */
@@ -159,8 +159,25 @@ ul.subMenus a:hover {
     background-color: #c75270; /* Highlight on hover */
 }
 
+/* Active menu item styles */
 li.limainMenu.active ul.subMenus {
     display: block; /* Show the submenu */
+}
+
+ul.subMenus a.subMenuLink {
+    background-color: #555555; /* Slightly darker background for all submenus */
+    border: none; /* No border for unselected submenu links */
+}
+
+/* Highlighted active submenu link */
+ul.subMenus a.subMenuLink.active {
+    background-color: #333333; /* Darker background for active submenu link */
+    border: 2px solid #c75270; /* Add a border for the active submenu */
+}
+
+/* Submenu hover effect when active */
+ul.subMenus a.subMenuLink.active:hover {
+    background-color: #c75270; /* Highlight on hover */
 }
 
 
@@ -557,7 +574,7 @@ div.orderProductRow {
   margin-left: 12px;
   font-size: 15px;
   font-weight: bold;
-  color: #alala1; 
+  color: #721c24; 
   text-transform: uppercase;
 }
 

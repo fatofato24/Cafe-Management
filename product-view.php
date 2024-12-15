@@ -50,50 +50,96 @@ $users = include('database/show.php');
                         <div class="column">
                             <h1 class="section_header"><i class="fa fa-list"></i> List of Products</h1>
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Image</th>
-                                        <th>Product Name</th>
-                                        <th>Description</th>
-                                        <th>Created By</th>
-                                        <th>Created At</th>
-                                        <th>Updated At</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (count($products) > 0): ?>
-                                        <?php foreach ($products as $index => $product): ?>
-                                            <tr>
-                                                <td><?= $index + 1 ?></td>
-                                                <td><img class="productImages" src="uploads/products/<?= $product['img'] ?>" alt="" style="max-width: 100px;"></td>
-                                                <td><?= $product['product_name'] ?></td>
-                                                <td><?= $product['description'] ?></td>
-                                                <td><?= $product['created_by'] ?></td>
-                                                <td><?= date('M d, Y @ h:i:s A', strtotime($product['created_at'])) ?></td>
-                                                <td><?= date('M d, Y @ h:i:s A', strtotime($product['updated_at'])) ?></td>
-                                                <td>
-                                                    <a href="#" class="updateProduct" data-productid="<?= $product['id'] ?>" 
-                                                       data-productname="<?= $product['product_name'] ?>" 
-                                                       data-description="<?= $product['description'] ?>"
-                                                       data-productimage="<?= $product['img'] ?>">
-                                                        <i class="fa fa-pencil"></i> Edit
-                                                    </a>
-                                                    <a href="#" class="deleteProduct" data-productid="<?= $product['id'] ?>" 
-                                                       data-productname="<?= $product['product_name'] ?>">
-                                                        <i class=" fa fa-trash"></i> Delete
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="8">No products found.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Suppliers</th>
+            <th>Created By</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (count($products) > 0): ?>
+            <?php foreach ($products as $index => $product): ?>
+                <tr>
+                    <td><?= $index + 1 ?></td>
+                    <td>
+                        <img class="productImages" src="uploads/products/<?= htmlspecialchars($product['img']) ?>" 
+                             alt="Product Image" style="max-width: 100px;">
+                    </td>
+                    <td><?= htmlspecialchars($product['product_name']) ?></td>
+                    <td><?= htmlspecialchars($product['description']) ?></td>
+                    
+                    <!-- Suppliers Column -->
+                    <td>
+                        <?php
+                        // Fetch suppliers associated with the product
+                        $supplier_list = '-'; // Default if no suppliers are found
+                        $pid = $product['id']; // Current product ID
+                        
+                        $stmt = $conn->prepare("
+                            SELECT supplier_name 
+                            FROM suppliers
+                            JOIN productsuppliers ON productsuppliers.supplier = suppliers.id
+                            WHERE productsuppliers.product = :product_id
+                        ");
+                        $stmt->bindParam(':product_id', $pid, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        if ($rows) {
+                            // Extract supplier names and format them as a list
+                            $supplier_arr = array_column($rows, 'supplier_name');
+                            $supplier_list = '<li>' . implode("</li><li>", array_map('htmlspecialchars', $supplier_arr)) . '</li>';
+                        }
+                        ?>
+                        <ul><?= $supplier_list ?></ul>
+                    </td>
+                    
+                    <td>
+                        <?php
+                        // Fetch the name of the user who created this product
+                        $uid = $product['created_by'];
+                        $stmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE id = :user_id");
+                        $stmt->bindParam(':user_id', $uid, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $user_row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $created_by_name = $user_row 
+                            ? htmlspecialchars($user_row['first_name'] . ' ' . $user_row['last_name']) 
+                            : '-';
+                        ?>
+                        <?= $created_by_name ?>
+                    </td>
+                    
+                    <td><?= date('M d, Y @ h:i:s A', strtotime($product['created_at'])) ?></td>
+                    <td><?= date('M d, Y @ h:i:s A', strtotime($product['updated_at'])) ?></td>
+                    <td>
+                        <a href="#" class="updateProduct" data-productid="<?= $product['id'] ?>" 
+                           data-productname="<?= htmlspecialchars($product['product_name']) ?>" 
+                           data-description="<?= htmlspecialchars($product['description']) ?>"
+                           data-productimage="<?= htmlspecialchars($product['img']) ?>">
+                            <i class="fa fa-pencil"></i> Edit
+                        </a>
+                        <a href="#" class="deleteProduct" data-productid="<?= $product['id'] ?>" 
+                           data-productname="<?= htmlspecialchars($product['product_name']) ?>">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="9">No products found.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
                         </div>
                     </div>
                 </div>   
