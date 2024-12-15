@@ -20,6 +20,7 @@ if (isset($_SESSION['response'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -209,69 +210,105 @@ if (isset($_SESSION['response'])) {
 <script src="js/jquery/jquery-3.7.1.min.js"></script>
 
 <script>
-    var products = <?= $products ?>;  // This loads products from PHP into JS
+    var products = <?= $products ?>;  // Products data passed from PHP
+var counter = 0;
 
-    function script() {
-        let productOptionsTemplate = '\
-<div>\
-    <label for="product_name">PRODUCT NAME</label>\
-    <select name="product_name" class="productNameSelect" id="product_name">\
-        <option value="">Select Product</option>\
-        INSERTPRODUCTHERE\
-    </select>\
-</div>';
+function script() {
+    var vm = this;
 
-        this.initialize = function() {
-            this.registerEvents();  // Register the event listeners
-            this.renderProductOptions();  // Initially render the products into the dropdown
-        };
+    this.initialize = function () {
+        this.registerEvents();
+    };
 
-        this.renderProductOptions = function() {
-            let optionHtml = '';
-            // Loop through the products array and create option elements
-            products.forEach((product) => {
-                optionHtml += `<option value="${product.id}">${product.product_name}</option>`;
-            });
+    this.registerEvents = function () {
+        // Handle Add Product Button
+        document.getElementById('orderProductBtn').addEventListener('click', function () {
+            vm.addProductRow();
+        });
 
-            // Replace INSERTPRODUCTHERE with the actual options
-            productOptions = productOptionsTemplate.replace('INSERTPRODUCTHERE', optionHtml);
-        };
+        // Handle Dynamic Events
+        document.getElementById('orderProductLists').addEventListener('change', function (e) {
+            if (e.target.classList.contains('productNameSelect')) {
+                let productId = e.target.value;
+                let counterId = e.target.dataset.counter;
+                let supplierContainer = document.getElementById(`supplierRows_${counterId}`);
 
-        this.registerEvents = function() {
-            document.addEventListener('click', function(e) {
-                let targetElement = e.target;
-
-                // Add new product order row
-                if (targetElement.id === 'orderProductBtn') {
-                    let orderProductListsContainer = document.getElementById('orderProductLists');
-
-                    // Add a new order product row with the product dropdown
-                    orderProductListsContainer.innerHTML += '\
-                        <div class="orderProductRow">\
-                            ' + productOptions + '\
-                            <div class="suppliersRows"></div>\
-                        </div>';
+                if (productId) {
+                    // Fetch suppliers for selected product
+                    $.get('database/get-product-suppliers.php', { id: productId }, function (suppliers) {
+                        vm.renderSupplierRows(suppliers, supplierContainer);
+                    }, 'json');
+                } else {
+                    supplierContainer.innerHTML = ''; // Clear suppliers if no product is selected
                 }
-            });
+            }
+        });
 
-            document.addEventListener('change', function(e) {
-                let targetElement = e.target;
-                if (targetElement.classList.contains('productNameSelect')) {
-                    let productId = targetElement.value;
-
-                    if (!productId.length) {
-                        console.log('No product selected');
-                    } else {
-                        console.log('Product selected:', productId);
-                        // Further logic for displaying product details, etc.
-                    }
+        // Handle Increment/Decrement Quantity Buttons
+        document.getElementById('orderProductLists').addEventListener('click', function (e) {
+            if (e.target.classList.contains('incrementQtyBtn')) {
+                let qtyInput = e.target.previousElementSibling;
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+            }
+            if (e.target.classList.contains('decrementQtyBtn')) {
+                let qtyInput = e.target.nextElementSibling;
+                if (parseInt(qtyInput.value) > 1) {
+                    qtyInput.value = parseInt(qtyInput.value) - 1;
                 }
-            });
-        };
-    }
+            }
+        });
+    };
 
-    // Initialize the script
-    (new script()).initialize();
+    this.addProductRow = function () {
+        let orderProductListsContainer = document.getElementById('orderProductLists');
+        let productRowHtml = `
+            <div class="orderProductRow" id="orderProductRow_${counter}">
+                <label for="product_name">PRODUCT NAME</label>
+                <select name="product_name" class="productNameSelect" data-counter="${counter}">
+                    <option value="">Select Product</option>
+                    ${products.map(product => `<option value="${product.id}">${product.product_name}</option>`).join('')}
+                </select>
+                <div class="quantity-container">
+                    <button type="button" class="decrementQtyBtn">-</button>
+                    <input type="number" min="1" value="1" class="quantityInput" />
+                    <button type="button" class="incrementQtyBtn">+</button>
+                </div>
+                <div class="suppliersRows" id="supplierRows_${counter}"></div>
+            </div>`;
+        orderProductListsContainer.insertAdjacentHTML('beforeend', productRowHtml);
+        counter++; // Increment counter for next row
+    };
+
+    this.renderSupplierRows = function (suppliers, container) {
+        let supplierRows = '';
+
+        if (suppliers.length > 0) {
+            suppliers.forEach(supplier => {
+                supplierRows += `
+                    <div class="row">
+                        <div style="width: 50%;">
+                            <p class="supplierName">${supplier.supplier_name}</p>
+                        </div>
+                        <div style="width: 50%;">
+                            <label for="quantity_${supplier.id}">Supplier Quantity:</label>
+                            <input type="number" min="1" id="quantity_${supplier.id}" 
+                                name="supplier_quantity[${supplier.id}]" 
+                                class="appFormInput" placeholder="Enter quantity..." />
+                        </div>
+                    </div>`;
+            });
+        } else {
+            supplierRows = `<p>No suppliers available for this product.</p>`;
+        }
+
+        container.innerHTML = supplierRows;  // Render the rows into the container
+    };
+}
+
+// Initialize the script
+(new script()).initialize();
+
+
 </script>
 </body>
 </html>
