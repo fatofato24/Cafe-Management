@@ -483,6 +483,8 @@ table th, table td {
   height: 100px;
 }
 #suppliersSelect {
+    max-height: 200px; /* Adjust height as needed */
+    overflow-y: auto;
     display: block;
     width: 100%;
     padding: 10px;

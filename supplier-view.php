@@ -123,8 +123,9 @@ try {
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
+    <script src="js/script.js"></script>
     <script>
     // Handle Edit (Update Supplier)
     document.addEventListener('click', function(e) {

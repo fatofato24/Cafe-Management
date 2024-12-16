@@ -163,6 +163,54 @@ if (isset($_SESSION['response'])) {
                 max-width: 100%;
             }
         }
+
+        
+/* Add this to the removeBtn class */
+.removeBtn {
+    background-color: #f685a2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+    float: right; /* Align the button to the right */
+}
+
+.removeBtn:hover {
+    background-color: #f690bf;
+}
+.orderProductRow {
+    position: relative; /* To ensure the button floats correctly within the container */
+}
+
+.removeBtn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the button */
+}
+/* Success Message */
+.success-message {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* No Products Message */
+.no-products-message {
+    background-color: #f2f2f2;
+    color: #888;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
     </style>
 </head>
 <body>
@@ -190,14 +238,22 @@ if (isset($_SESSION['response'])) {
                     <div class="column column-12">
                         <h1 class="section_header"><i class="fa fa-plus"></i> Order Product</h1>
                         <div>
-                            <div class="alignRight">
-                                <button class="orderBtn orderProductBtn" id="orderProductBtn">Add Another Product</button>
+                            <form action="database/save-order.php" method="POST">
+                                 <div class="alignRight">
+                                <button type="button" class="orderBtn orderProductBtn" id="orderProductBtn">Add Another Product</button>
                             </div>
-                            <div id="orderProductLists"></div>
+                            <!-- Display message if no products are added yet -->
+<div id="no-products-message" class="no-products-message">
+    No products selected yet. Click "Add Product" to start the order.
+</div>
+
+<div id="orderProductLists"></div>
 
                             <div class="alignRight marginTop20">
-                                <button class="orderBtn submitOrderProductBtn">Submit Order</button>
+                                <button type="submit" class="orderBtn submitOrderProductBtn">Submit Order</button>
                             </div>
+                            </form>
+                           
                         </div>
                     </div>
                 </div>
@@ -205,9 +261,10 @@ if (isset($_SESSION['response'])) {
         </div>
     </div>
 </div>
-
-<script src="js/script.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="js/jquery/jquery-3.7.1.min.js"></script>
+<script src="js/script.js"></script>
+
 
 <script>
     var products = <?= $products ?>;  // Products data passed from PHP
@@ -221,10 +278,13 @@ function script() {
     };
 
     this.registerEvents = function () {
-        // Handle Add Product Button
         document.getElementById('orderProductBtn').addEventListener('click', function () {
-            vm.addProductRow();
-        });
+    // Hide the "No products selected yet" message when the first product is added
+    document.getElementById('no-products-message').style.display = 'none';
+    
+    // Call the function to add a product row
+    vm.addProductRow();
+});
 
         // Handle Dynamic Events
         document.getElementById('orderProductLists').addEventListener('change', function (e) {
@@ -256,6 +316,12 @@ function script() {
                     qtyInput.value = parseInt(qtyInput.value) - 1;
                 }
             }
+
+            // Handle Remove Button
+            if (e.target.classList.contains('removeBtn')) {
+                    let rowId = e.target.dataset.rowId;
+                    document.getElementById(rowId).remove();
+                }
         });
     };
 
@@ -264,7 +330,7 @@ function script() {
         let productRowHtml = `
             <div class="orderProductRow" id="orderProductRow_${counter}">
                 <label for="product_name">PRODUCT NAME</label>
-                <select name="product_name" class="productNameSelect" data-counter="${counter}">
+                <select name="products[]" class="productNameSelect" data-counter="${counter}">
                     <option value="">Select Product</option>
                     ${products.map(product => `<option value="${product.id}">${product.product_name}</option>`).join('')}
                 </select>
@@ -272,7 +338,10 @@ function script() {
                     <button type="button" class="decrementQtyBtn">-</button>
                     <input type="number" min="1" value="1" class="quantityInput" />
                     <button type="button" class="incrementQtyBtn">+</button>
-                </div>
+                <button type="button" class="removeBtn" data-row-id="orderProductRow_${counter}">
+                    <i class="fa fa-trash"></i> Remove
+                </button>
+                    </div>
                 <div class="suppliersRows" id="supplierRows_${counter}"></div>
             </div>`;
         orderProductListsContainer.insertAdjacentHTML('beforeend', productRowHtml);
@@ -300,6 +369,7 @@ function script() {
         } else {
             supplierRows = `<p>No suppliers available for this product.</p>`;
         }
+
         container.innerHTML = supplierRows;  // Render the rows into the container
     };
 }
@@ -311,3 +381,8 @@ function script() {
 </script>
 </body>
 </html>
+<?php if ($successMessage): ?>
+    <div class="success-message">
+        <?= htmlspecialchars($successMessage) ?>
+    </div>
+<?php endif; ?>
