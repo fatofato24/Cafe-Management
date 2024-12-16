@@ -16,7 +16,9 @@ $user = $_SESSION['user'];
         <li class="limainMenu">
             <a href="./dashboard.php"><i class="fa fa-dashboard"></i> <span class="menuText">Dashboard</span></a>
         </li>
-
+        <li class="limainMenu">
+            <a href="./report.php"><i class="fa fa-file"></i> <span class="menuText">Reports</span></a>
+        </li>
         <!-- User Management -->
 <li class="limainMenu triggerMenu" data-submenu="user">
     <a href="javascript:void(0);" class="limainMenu_link">

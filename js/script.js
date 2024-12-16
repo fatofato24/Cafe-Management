@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Highlight the current submenu more distinctly
                 if (submenuLink) {
                     submenuLink.style.backgroundColor = 'rgb(141, 30, 58)'; // Even darker shade
-                    submenuLink.style.border = '2px solidrgb(219, 75, 164)'; // Add border
+                    submenuLink.style.border = '2px solid rgb(255, 255, 255)'; // Add border
                 }
             }
         }

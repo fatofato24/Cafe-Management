@@ -300,7 +300,6 @@ function script() {
         } else {
             supplierRows = `<p>No suppliers available for this product.</p>`;
         }
-
         container.innerHTML = supplierRows;  // Render the rows into the container
     };
 }
