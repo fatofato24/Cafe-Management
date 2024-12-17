@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Get POST data
 $post_data = $_POST;
 

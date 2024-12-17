@@ -16,9 +16,7 @@ $user = $_SESSION['user'];
         <li class="limainMenu">
             <a href="./dashboard.php"><i class="fa fa-dashboard"></i> <span class="menuText">Dashboard</span></a>
         </li>
-        <li class="limainMenu">
-            <a href="./report.php"><i class="fa fa-file"></i> <span class="menuText">Reports</span></a>
-        </li>
+        
         <!-- User Management -->
 <li class="limainMenu triggerMenu" data-submenu="user">
     <a href="javascript:void(0);" class="limainMenu_link">
@@ -54,10 +52,6 @@ $user = $_SESSION['user'];
             <i class="fa fa-circle"></i>
             <span class="submenuText" data-short-text="Add" data-full-text="Add Products">Add Products</span>
         </a>
-        <a href="./product-order.php" class="subMenuLink">
-            <i class="fa fa-circle"></i>
-            <span class="submenuText" data-short-text="Order" data-full-text="Order Product">Order Product</span>
-        </a>
     </ul>
 </li>
 
@@ -79,8 +73,28 @@ $user = $_SESSION['user'];
         </a>
     </ul>
 </li>
-
-
+<li class="limainMenu">
+            <a href="./report.php"><i class="fa fa-file"></i> <span class="menuText">Reports</span></a>
+        </li>
+        
+        <li class="limainMenu triggerMenu" data-submenu="order">
+    <a href="javascript:void(0);" class="limainMenu_link">
+        <i class="fa fa-truck"></i>
+        <span class="menuText submenuText"  data-full-text="Order Management">Orders</span>
+        <i class="fa fa-angle-down MainMenuIcon"></i>
+    </a>
+    <ul class="subMenus" id="order">
+        
+        <a href="./product-order.php" class="subMenuLink">
+            <i class="fa fa-circle"></i>
+            <span class="submenuText" data-short-text="Add" data-full-text="Order Products">Order Products</span>
+        </a>
+        <a href="./order-view.php" class="subMenuLink">
+            <i class="fa fa-circle"></i>
+            <span class="submenuText" data-short-text="View" data-full-text="View Order">View Order</span>
+        </a>
+    </ul>
+</li>
     </ul>
 </div>
 </div>

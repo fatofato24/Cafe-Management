@@ -264,8 +264,6 @@ if (isset($_SESSION['response'])) {
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="js/jquery/jquery-3.7.1.min.js"></script>
 <script src="js/script.js"></script>
-
-
 <script>
     var products = <?= $products ?>;  // Products data passed from PHP
 var counter = 0;
