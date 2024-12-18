@@ -51,7 +51,7 @@ try {
             'supplier' => $data['supplier_id'],
             'product' => $data['product_id'],
             'quantity_ordered' => $data['quantity_ordered'],
-            'status' => 'ORDERED',  // Default status as ordered
+            'status' => 'PENDING',  // Default status as ordered
             'batch' => $batch,  // Assign the batch
             'created_by' => $_SESSION['user']['id'],  // User ID of the person placing the order
             'updated_at' => date('Y-m-d H:i:s'),

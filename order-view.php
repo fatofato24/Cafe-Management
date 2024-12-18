@@ -68,6 +68,105 @@ require_once('database/connection.php');
             background: #b5ebb5; /* Green for Completed */
             color: #333;
         }
+        .delete-button {
+        padding: 6px 12px;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+    .delete-button:hover {
+        background-color: #ff0000;
+    }
+    .modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.modal-content {
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-background {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-actions {
+    text-align: right;
+}
+
+.btn-save {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background-color: #45a049;
+}
+
+.btn-cancel:hover {
+    background-color: #e53935;
+}
+
     </style>
 </head>
 <body>
@@ -83,7 +182,8 @@ require_once('database/connection.php');
                     // Fetch orders from the database
                     $stmt = $conn->prepare(
                         "SELECT 
-                            order_product.batch,       
+                            order_product.id,  -- Add this line to fetch the unique ID
+                            order_product.batch,
                             products.product_name,
                             order_product.quantity_ordered,
                             users.first_name, 
@@ -91,13 +191,14 @@ require_once('database/connection.php');
                             suppliers.supplier_name, 
                             order_product.status, 
                             order_product.created_at, 
-                            order_product.created_by    
+                            order_product.created_by
                         FROM order_product
                         JOIN suppliers ON order_product.supplier = suppliers.id
                         JOIN products ON order_product.product = products.id
                         JOIN users ON order_product.created_by = users.id
                         ORDER BY order_product.created_at DESC"
                     );
+                    
                     $stmt->execute();
                     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
@@ -144,11 +245,24 @@ require_once('database/connection.php');
                                                 </td>
                                                 <td><?= htmlspecialchars($order['created_by']) ?></td>
                                                 <td><?= date('M d, Y @ h:i A', strtotime($order['created_at'])) ?></td>
+                                                
+                                                <td>
+                <button 
+                    class="delete-button" 
+                    data-id="<?= $order['id'] ?>" 
+                    data-name="<?= htmlspecialchars($order['product_name']) ?>">Delete</button>
+            </td>
+
+
                                             </tr>
-                                        <?php endforeach; ?>
+                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
-                                <a href="#" class="update-button">Update</a>
+                                <a href="#" class="update-button" data-id="<?= $order['id'] ?>" 
+   data-product="<?= htmlspecialchars($order['product_name']) ?>" 
+   data-quantity="<?= htmlspecialchars($order['quantity_ordered']) ?>" 
+   data-status="<?= htmlspecialchars($order['status']) ?>">Update</a>
+
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -162,5 +276,131 @@ require_once('database/connection.php');
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
+    <script>
+    $(document).on('click', '.delete-button', function () {
+    const orderId = $(this).data('id');
+    const productName = $(this).data('name');
+
+    console.log(`Deleting order ID: ${orderId}, Product: ${productName}`);
+
+    if (confirm(`Are you sure you want to delete the order for "${productName}"?`)) {
+        $.ajax({
+            url: './database/delete-order.php',
+            type: 'POST',
+            data: { id: orderId },
+            success: function (response) {
+                console.log(response); // Log response for debugging
+                if (response.success) {
+                    alert(response.message || 'Order deleted successfully.');
+                    location.reload();
+                } else {
+                    alert(response.message || 'Failed to delete the order.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(`Error: ${error}`);
+                alert('Failed to delete the order. Please try again.');
+            }
+        });
+    }
+});
+</script>
+<!-- Update Modal -->
+<div id="updateModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUpdateModal()">&times;</span>
+        <h3>Update Order Details</h3>
+        <form id="updateForm">
+            <input type="hidden" name="id" id="updateOrderId">
+            <div class="form-group">
+                <label for="updateProductName">Product Name:</label>
+                <input type="text" name="product_name" id="updateProductName" required>
+            </div>
+            <div class="form-group">
+                <label for="updateQuantity">Quantity:</label>
+                <input type="number" name="quantity" id="updateQuantity" required>
+            </div>
+            <div class="form-group">
+                <label for="updateStatus">Status:</label>
+                <select name="status" id="updateStatus">
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Background -->
+<div id="modalBackground" class="modal-background" onclick="closeUpdateModal()"></div>
+
+<script>
+
+// Open Update Modal
+function openUpdateModal(orderId, productName, quantity, status) {
+    console.log(`Opening update modal for Order ID: ${orderId}, Product: ${productName}`);
+    document.getElementById('updateModal').style.display = 'block';
+    document.getElementById('modalBackground').style.display = 'block';
+
+    // Populate the form with existing values
+    document.getElementById('updateOrderId').value = orderId;
+    document.getElementById('updateProductName').value = productName;
+    document.getElementById('updateQuantity').value = quantity;
+    document.getElementById('updateStatus').value = status;
+}
+
+// Close Update Modal
+function closeUpdateModal() {
+    document.getElementById('updateModal').style.display = 'none';
+    document.getElementById('modalBackground').style.display = 'none';
+}
+
+// Attach event to update buttons
+$(document).on('click', '.update-button', function (e) {
+    e.preventDefault();
+
+    const orderId = $(this).data('id');
+    const productName = $(this).data('product');
+    const quantity = $(this).data('quantity');
+    const status = $(this).data('status');
+
+    openUpdateModal(orderId, productName, quantity, status);
+});
+
+// Handle Update Form Submission
+$('#updateForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const formData = $(this).serialize();
+    const orderId = $('#updateOrderId').val();
+    console.log(`Submitting update for Order ID: ${orderId}`);
+    console.log(`Form Data: ${formData}`);
+
+    $.ajax({
+        url: './database/update-order.php', // Backend endpoint for updating the order
+        type: 'POST',
+        data: formData,
+        dataType: 'json', // Ensure response is JSON
+        success: function (response) {
+            console.log('Update response:', response);
+            if (response.success) {
+                alert(response.message || 'Order updated successfully.');
+                location.reload(); // Refresh the page
+            } else {
+                alert(response.message || 'Failed to update the order.');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(`Error: ${error}`);
+            console.error(`Response: ${xhr.responseText}`);
+            alert('An error occurred while updating the order. Please try again.');
+        }
+    });
+});
+</script>
 </body>
 </html>
