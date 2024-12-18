@@ -2,22 +2,19 @@
 
 include('connection.php');
 $statuses = ['pending', 'complete', 'incomplete'];
+
 $results = [];
 
 // Loop through statuses and query
 foreach ($statuses as $status) {
-  $stmt = $conn->prepare("SELECT COUNT(*) as status_count FROM order_product WHERE order_product.status = :status");
-  $stmt->execute([':status' => $status]);
-  $row = $stmt->fetch();
-  $count = $row['status_count'];
+    $stmt = $conn->prepare("SELECT COUNT(*) as status_count FROM order_product WHERE order_product.status = '$status'");
+    $stmt->execute();
+    $row = $stmt->fetch();
 
-  // var_dump($count); 
-  // die;
+    $count = $row['status_count'];
 
-  $results[$status] = $count;
+    $results[] = [
+        'name' => strtoupper($status),
+        'y' => (int)$count
+    ];
 }
-
-var_dump($results);
-die;
-
-?>

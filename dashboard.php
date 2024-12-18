@@ -8,7 +8,9 @@ if (!isset($_SESSION['user'])) {
 
 $user = $_SESSION['user'];
 
-// include('database/po_status_pie_graph.php');
+//get graph data - purchase order by status
+include('database/po_status_pie_graph.php');
+
 ?>
 
 <!DOCTYPE html>
@@ -36,9 +38,7 @@ $user = $_SESSION['user'];
                     <figure class="highcharts-figure">
                         <div id="container"></div>
                         <p class="highcharts-description">
-                            Pie charts are very popular for showing a compact overview of a
-                            composition or comparison. While they can be harder to read than
-                            column charts, they remain a popular choice for small datasets.
+                            Break-down of the purchase orders by status.
                         </p>
                     </figure>
                 </div>
@@ -56,6 +56,9 @@ $user = $_SESSION['user'];
     <script src="js/script.js"></script>
 
     <script>
+
+        var graphData=<?=json_encode($results)?>
+
         // Initialize Highcharts Pie Chart
         Highcharts.chart('container', {
             chart: {
@@ -68,9 +71,15 @@ $user = $_SESSION['user'];
                 text: 'Purchase Orders By Status',
                 align: 'left'
             },
+
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' // Limit to one decimal place
-            },
+    pointFormatter: function() {
+        var point = this,
+            series = point.series;
+
+        return `<b>${point.name}</b>: ${point.y}`
+    }
+},
             plotOptions: {
                 pie: {
                     allowPointSelect: true,
@@ -84,11 +93,7 @@ $user = $_SESSION['user'];
             series: [{
                 name: 'Status',
                 colorByPoint: true,
-                data: [
-                    { name: 'PENDING', y: 70, sliced: true, selected: true },
-                    { name: 'COMPLETED', y: 14 },
-                    { name: 'INCOMPLETE', y: 16 } // Updated the percentage to sum to 100%
-                ]
+                data: graphData
             }]
         });
     </script>
