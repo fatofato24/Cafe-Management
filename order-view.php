@@ -125,16 +125,25 @@ require_once('database/connection.php');
 
 label {
     display: block;
+    margin-top: 5px;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-input, select {
-    width: 100%;
+input{
+    width: 90%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+select{
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .form-actions {
@@ -244,25 +253,21 @@ input, select {
                                                     <span class="po-badge <?= $status_class ?>"><?= htmlspecialchars($order['status']) ?></span>
                                                 </td>
                                                 <td><?= htmlspecialchars($order['created_by']) ?></td>
-                                                <td><?= date('M d, Y @ h:i A', strtotime($order['created_at'])) ?></td>
-                                                
-                                                <td>
-                <button 
-                    class="delete-button" 
-                    data-id="<?= $order['id'] ?>" 
-                    data-name="<?= htmlspecialchars($order['product_name']) ?>">Delete</button>
-            </td>
+                                                <td><?= date('M d, Y @ h:i A', strtotime($order['created_at'])) ?></td>                                                                                   
+    <td>
+        <button class="delete-button" data-id="<?= $order['id'] ?>" data-name="<?= htmlspecialchars($order['product_name']) ?>">Delete</button>
+        <a href="#" class="update-button" data-id="<?= $order['id'] ?>" 
+           data-product="<?= htmlspecialchars($order['product_name']) ?>" 
+           data-quantity="<?= htmlspecialchars($order['quantity_ordered']) ?>" 
+           data-status="<?= htmlspecialchars($order['status']) ?>">Update</a>
+    </td>
+</tr>
 
-
+                                                </td>
                                             </tr>
                                          <?php endforeach; ?>
                                     </tbody>
                                 </table>
-                                <a href="#" class="update-button" data-id="<?= $order['id'] ?>" 
-   data-product="<?= htmlspecialchars($order['product_name']) ?>" 
-   data-quantity="<?= htmlspecialchars($order['quantity_ordered']) ?>" 
-   data-status="<?= htmlspecialchars($order['status']) ?>">Update</a>
-
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -277,7 +282,7 @@ input, select {
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
     <script src="js/script.js"></script>
     <script>
-    $(document).on('click', '.delete-button', function () {
+  $(document).on('click', '.delete-button', function () {
     const orderId = $(this).data('id');
     const productName = $(this).data('name');
 
@@ -289,17 +294,16 @@ input, select {
             type: 'POST',
             data: { id: orderId },
             success: function (response) {
-                console.log(response); // Log response for debugging
+                console.log('Server response:', response); // Log the full response object
                 if (response.success) {
+                    // Find the row corresponding to the deleted order and remove it
+                    $(`button[data-id='${orderId}']`).closest('tr').remove();
                     alert(response.message || 'Order deleted successfully.');
-                    location.reload();
-                } else {
-                    alert(response.message || 'Failed to delete the order.');
-                }
+                } 
             },
             error: function (xhr, status, error) {
                 console.error(`Error: ${error}`);
-                alert('Failed to delete the order. Please try again.');
+                
             }
         });
     }
@@ -359,7 +363,6 @@ function closeUpdateModal() {
     document.getElementById('modalBackground').style.display = 'none';
 }
 
-// Attach event to update buttons
 $(document).on('click', '.update-button', function (e) {
     e.preventDefault();
 

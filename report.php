@@ -87,8 +87,8 @@ $user = $_SESSION['user'];
                     <div class="reportType">
                         <p>Export Products</p>
                         <div class="alignRight">
-                            <a href="export_products_excel.php" class="reportExportBtn">Excel</a>
-                            <a href="export_products_pdf.php" class="reportExportBtn">PDF</a>
+                            <a href="database/report_csv.php?report=product" class="reportExportBtn">Excel</a>
+                            <a href="database/report_pdf.php?report=product" class="reportExportBtn">PDF</a>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@ $user = $_SESSION['user'];
                     <div class="reportType">
                         <p>Export Suppliers</p>
                         <div class="alignRight">
-                            <a href="export_suppliers_excel.php" class="reportExportBtn">Excel</a>
+                            <a href="database/report_csv.php?report=supplier" class="reportExportBtn">Excel</a>
                             <a href="export_suppliers_pdf.php" class="reportExportBtn">PDF</a>
                         </div>
                     </div>

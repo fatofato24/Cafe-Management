@@ -155,6 +155,77 @@ $successMessage = '';
             }
            
         }
+        /* General styling for the Permissions section */
+.Permissions {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* Styling for each permission section */
+.permission {
+    border: 1px solid #ccc; /* Add border between sections */
+    margin-bottom: 15px;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+/* Row layout */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+/* Column layout for each permission */
+.col-md-3 {
+    flex: 1;
+    padding: 5px;
+}
+
+/* Column for permissions (View, Create, Edit, etc.) */
+.col-md-2 {
+    flex: 1;
+    padding: 2px;
+}
+
+/* Styling for the module names (Dashboard, Reports, etc.) */
+.moduleName {
+    font-weight: bold;
+    margin: 0;
+    
+}
+
+/* Styling for the module functions (View, Create, Edit, etc.) */
+.moduleFunc {
+    display: inline-block;
+    padding: 5px 5px;
+    margin: 5px;
+    background-color:rgb(230, 103, 190);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the buttons */
+.moduleFunc:hover {
+    background-color:rgb(137, 54, 143);
+}
+
+/* Active class styling */
+.permissionActive {
+    background-color:rgb(46, 7, 49); /* Green color when active */
+}
+
+/* Ensuring the layout is responsive */
+@media (max-width: 768px) {
+    .col-md-3, .col-md-2 {
+        flex: 100%; /* Stack columns on smaller screens */
+        margin-bottom: 10px;
+    }
+}
+
     </style>
     
 </head>
@@ -211,6 +282,9 @@ $successMessage = '';
                                          style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
                                          </i>
                                         </div>
+                                        <input type="hidden" name="permissions">
+
+                                        <?php include('partials/permission.php')?>
 
                                     <button type="submit" class="appBtn">Add User</button>
                                 </form>
@@ -235,5 +309,34 @@ $successMessage = '';
     </div>
     <script src="js/script.js"></script>
     <script src="js/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+    function loadScript() {
+        this.initialize = function() {
+            this.registerEvents();
+        };
+
+        this.registerEvents = function() {
+            // Click event
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+
+                // Check if class name moduleFunc is clicked
+                if (target.classList.contains('moduleFunc')) {
+                    // Set the active class
+                    if (target.classList.contains('permissionActive')) {
+                        target.classList.remove('permissionActive');
+                    } else {
+                        target.classList.add('permissionActive');
+                    }
+                    // Add hidden element store value here
+                }
+            });
+        };
+    }
+
+    var script = new loadScript();
+    script.initialize();
+</script>
+
 </body>
 </html>

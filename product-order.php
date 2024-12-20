@@ -333,9 +333,7 @@ function script() {
                     ${products.map(product => `<option value="${product.id}">${product.product_name}</option>`).join('')}
                 </select>
                 <div class="quantity-container">
-                    <button type="button" class="decrementQtyBtn">-</button>
-                    <input type="number" min="1" value="1" class="quantityInput" />
-                    <button type="button" class="incrementQtyBtn">+</button>
+                    
                 <button type="button" class="removeBtn" data-row-id="orderProductRow_${counter}">
                     <i class="fa fa-trash"></i> Remove
                 </button>
@@ -374,7 +372,6 @@ function script() {
 
 // Initialize the script
 (new script()).initialize();
-
 
 </script>
 </body>

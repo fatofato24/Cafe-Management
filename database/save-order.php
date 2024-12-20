@@ -1,4 +1,6 @@
 <?php
+include('connection.php');
+
 session_start();
 // Get POST data
 $post_data = $_POST;
@@ -16,16 +18,28 @@ $post_data_arr = [];
 
 // Loop through each product and its corresponding supplier(s)
 foreach ($products as $key => $product_id) {
-    // Loop through the supplier quantities
+    // For each product, we will get the supplier quantities from the POST data
     foreach ($supplier_quantities as $supplier_id => $quantity) {
-        // Ensure there is a positive quantity
-        if ($quantity > 0) {
-            // Add each product-supplier combination with the quantity to the final array
+
+        // Ensure there is a valid supplier-product mapping in the productsuppliers table
+        $stmt = $conn->prepare("
+            SELECT 1 FROM productsuppliers WHERE product = :product_id AND supplier = :supplier_id
+        ");
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->bindParam(':supplier_id', $supplier_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Check if the supplier exists for the product
+        if ($stmt->rowCount() > 0 && $quantity > 0) {
+            // Add each valid product-supplier combination with the quantity to the final array
             $post_data_arr[] = [
                 'product_id' => $product_id,
                 'supplier_id' => $supplier_id,
                 'quantity_ordered' => $quantity
             ];
+        } else {
+            // Optional: Handle error if no valid supplier-product mapping is found
+            echo "No valid supplier found for Product ID $product_id and Supplier ID $supplier_id.<br>";
         }
     }
 }
@@ -35,24 +49,23 @@ echo '<pre>';
 print_r($post_data_arr);
 echo '</pre>';
 
-// Include database connection
-include('connection.php');
-
 // Initialize success flag and message
 $success = false;
 $message = '';
 
-// Try to insert the order into the database
 try {
-    $batch = time();  // Use timestamp for batch grouping
+    // Insert each product-supplier combination with a unique batch number
     foreach ($post_data_arr as $data) {
+        // Generate a unique batch number for each product-supplier pair
+        $batch = time() . '_' . uniqid();  // Use timestamp and a unique ID for batch
+        
         // Prepare data for the database insert
         $values = [
             'supplier' => $data['supplier_id'],
             'product' => $data['product_id'],
             'quantity_ordered' => $data['quantity_ordered'],
             'status' => 'PENDING',  // Default status as ordered
-            'batch' => $batch,  // Assign the batch
+            'batch' => $batch,  // Assign the unique batch
             'created_by' => $_SESSION['user']['id'],  // User ID of the person placing the order
             'updated_at' => date('Y-m-d H:i:s'),
             'created_at' => date('Y-m-d H:i:s'),
@@ -62,7 +75,8 @@ try {
         $sql = "INSERT INTO order_product 
                 (supplier, product, quantity_ordered, status, batch, created_by, updated_at, created_at)
                 VALUES 
-                (:supplier, :product, :quantity_ordered, :status, :batch, :created_by, :updated_at, :created_at)";
+                (:supplier, :product, :quantity_ordered, :status, :batch, :created_by, :updated_at, :created_at)
+                ";
         
         // Prepare and execute the query
         $stmt = $conn->prepare($sql);
@@ -85,5 +99,4 @@ $_SESSION['response'] = [
 // Redirect back to the order page
 header('location: ../product-order.php');
 exit;
-
 ?>
