@@ -47,6 +47,9 @@ foreach ($rows as $row) {
         $statusCounts['incomplete']++; // Handle any unexpected statuses as 'incomplete'
     }
 }
+
+// Fetch supplier product data
+include('database/supplier_product_bar_graph.php');
 ?>
 
 <!DOCTYPE html>
@@ -57,17 +60,21 @@ foreach ($rows as $row) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/dashboard.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    
+
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Styling for Pie Chart */
-        .pie-chart-container {
-            width: 100%; /* Ensure the chart adjusts to the available space */
-            max-width: 400px; /* Smaller maximum width for the chart */
-            margin: 0 auto; /* Center the chart */
-            text-align: center;
+        /* Layout for the graphs to be side by side */
+        .charts-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .pie-chart-container, .bar-chart-container {
+            width: 48%; /* Take almost half of the container width */
             padding: 20px;
             background-color: #f9f9f9;
             border-radius: 10px;
@@ -76,7 +83,8 @@ foreach ($rows as $row) {
 
         canvas {
             display: block;
-            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
             margin: 0 auto;
         }
 
@@ -85,12 +93,7 @@ foreach ($rows as $row) {
             margin-bottom: 15px;
             color: #333;
             font-weight: bold;
-        }
-
-        /* Hover effect for pie chart slices */
-        .chart-container:hover {
-            transform: scale(1.05);
-            transition: transform 0.3s ease;
+            text-align: center;
         }
     </style>
 </head>
@@ -104,72 +107,128 @@ foreach ($rows as $row) {
                 <div class="dashboard_content_main">
                     <h1 class="section_header"><i class="fa fa-tachometer-alt"></i> Dashboard</h1>
 
-                    <!-- Pie Chart Section -->
-                    <div class="pie-chart-container">
-                        <h2 class="chart-title">Order Status Distribution</h2>
-                        <canvas id="statusPieChart" width="400" height="400"></canvas>
+                    <!-- Side-by-side layout for the Pie and Bar Charts -->
+                    <div class="charts-container">
+                        <!-- Pie Chart Section -->
+                        <div class="pie-chart-container">
+                            <h2 class="chart-title">Order Status Distribution</h2>
+                            <canvas id="statusPieChart" width="400" height="400"></canvas>
+                        </div>
+
+                        <!-- Bar Chart Section -->
+                        <div class="bar-chart-container">
+                            <h2 class="chart-title">Product Count by Supplier</h2>
+                            <canvas id="productBarChart" width="400" height="400"></canvas>
+                        </div>
                     </div>
 
-                    <!-- Your existing dashboard content here -->
-                    
+                    <!-- Your existing dashboard content -->
                     <div class="dashboard_overview">
                         <!-- Include your other sections and content here -->
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="js/jquery/jquery-3.7.1.min.js"></script>
-    <script src="js/script.js"></script>
-
     <script>
-        // Pass PHP data to JavaScript
-        const statusCounts = <?php echo json_encode($statusCounts); ?>;
-        console.log("Status Counts:", statusCounts); // Check the data in the console
+        // Wait until DOM is fully loaded before executing
+        document.addEventListener('DOMContentLoaded', function () {
+            // Pass PHP data to JavaScript
+            const statusCounts = <?php echo json_encode($statusCounts); ?>;
+            const barGraphData = <?php echo json_encode($bar_chart_data); ?>;
+            const barGraphCategories = <?php echo json_encode($categories); ?>;
 
-        // Create the pie chart using Chart.js
-        const ctx = document.getElementById('statusPieChart').getContext('2d');
-        const pieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Pending', 'Completed', 'Incomplete'], // Updated label to "Incomplete"
-                datasets: [{
-                    label: 'Order Statuses',
-                    data: [statusCounts.pending, statusCounts.completed, statusCounts.incomplete], // Data from PHP
-                    backgroundColor: ['#FF5733', '#28a745', '#ffc107'], // Custom colors
-                    borderColor: '#fff',
-                    borderWidth: 2, // Subtle border for better look
-                    hoverOffset: 10 // Slight hover effect
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 14
-                            },
-                            color: '#333'
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw + ' orders'; // Show count in tooltip
+            // Log data for debugging
+            console.log("Status Counts:", statusCounts);
+            console.log("Bar Graph Categories:", barGraphCategories);
+            console.log("Bar Graph Data:", barGraphData);
+
+            // Create the pie chart using Chart.js
+            const ctxPie = document.getElementById('statusPieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'Completed', 'Incomplete'],
+                    datasets: [{
+                        label: 'Order Statuses',
+                        data: [statusCounts.pending, statusCounts.completed, statusCounts.incomplete],
+                        backgroundColor: ['#69359c ', '#b768a2', '#843f5b'], // Purple, Pink, Yellow
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
                             }
                         }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
                     }
-                },
-                animation: {
-                    animateScale: true, // Animate the pie slices to make it more interactive
-                    animateRotate: true
+                }
+            });
+
+            // Create the bar chart using Chart.js
+const ctxBar = document.getElementById('productBarChart').getContext('2d');
+new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+        labels: barGraphCategories, // Use dynamic categories
+        datasets: [{
+            label: 'Product Count',
+            data: barGraphData, // Use dynamic data
+            backgroundColor: [
+                '#dda0dd', // plum purple
+                '#7851a9', // royal purple
+                '#dcd0ff', // pale lavender
+                '#967bb6', // lavender purple
+                '#ff80e0', // Pastel Pink
+                '#ff99cc'  // Pale Pink
+            ], // Shades of pink for columns
+            borderColor: '#ff1a75', // Darker Pink for borders
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#333' // Text color for x-axis
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#333' // Text color for y-axis
                 }
             }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14
+                    },
+                    color: '#333'
+                }
+            }
+        }
+    }
+});
+
         });
     </script>
 </body>
