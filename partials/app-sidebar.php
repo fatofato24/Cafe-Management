@@ -72,14 +72,10 @@ $user = $_SESSION['user'];
             <span class="submenuText" data-short-text="Add" data-full-text="Add Suppliers">Add Suppliers</span>
         </a>
     </ul>
-</li>
-<li class="limainMenu">
-            <a href="./report.php"><i class="fa fa-file"></i> <span class="menuText">Reports</span></a>
-        </li>
-        
+</li>   
         <li class="limainMenu triggerMenu" data-submenu="order">
     <a href="javascript:void(0);" class="limainMenu_link">
-        <i class="fa fa-truck"></i>
+    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         <span class="menuText submenuText"  data-full-text="Order Management">Orders</span>
         <i class="fa fa-angle-down MainMenuIcon"></i>
     </a>
@@ -95,6 +91,9 @@ $user = $_SESSION['user'];
         </a>
     </ul>
 </li>
+<li class="limainMenu">
+            <a href="./report.php"><i class="fa fa-file"></i> <span class="menuText">Reports</span></a>
+        </li>
     </ul>
 </div>
 </div>

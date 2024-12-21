@@ -68,6 +68,12 @@ require_once('database/connection.php');
             background: #b5ebb5; /* Green for Completed */
             color: #333;
         }
+        .po-badge-incomplete{
+            padding:4px 6px;
+            border: 1px solid green;
+            background:rgb(192, 183, 28); /* Green for Completed */
+            color: #333;
+        }
         .delete-button {
         padding: 6px 12px;
         background-color: #ff4d4d;
@@ -195,6 +201,7 @@ select{
                             order_product.batch,
                             products.product_name,
                             order_product.quantity_ordered,
+                            order_product.quantity_received,
                             users.first_name, 
                             users.last_name, 
                             suppliers.supplier_name, 
@@ -228,7 +235,7 @@ select{
                                             <th>#</th>
                                             <th>Product</th>
                                             <th>QTY Ordered</th>
-                                            <th>Supplier</th>
+                                            <th>QTY Received</th>                                            <th>Supplier</th>
                                             <th>Status</th>
                                             <th>Ordered By</th>
                                             <th>Created Date</th>
@@ -240,6 +247,14 @@ select{
                                                 <td><?= $index + 1 ?></td>
                                                 <td><?= htmlspecialchars($order['product_name']) ?></td>
                                                 <td><?= htmlspecialchars($order['quantity_ordered']) ?></td>
+                                                <td>
+    <?php 
+    // Default value for received quantity as 0 when status is pending
+    $received_quantity = (strtolower($order['status']) == 'pending') ? 0 : $order['quantity_received'];
+    echo htmlspecialchars($received_quantity);
+    ?>
+</td>
+
                                                 <td><?= htmlspecialchars($order['supplier_name']) ?></td>
                                                 <td>
                                                     <?php 
@@ -248,6 +263,9 @@ select{
                                                         $status_class = 'po-badge-pending';
                                                     } elseif (strtolower($order['status']) == 'completed') {
                                                         $status_class = 'po-badge-completed';
+                                                    }
+                                                    elseif (strtolower($order['status']) == 'incomplete') {
+                                                        $status_class = 'po-badge-incomplete';
                                                     }
                                                     ?>
                                                     <span class="po-badge <?= $status_class ?>"><?= htmlspecialchars($order['status']) ?></span>
@@ -259,6 +277,7 @@ select{
         <a href="#" class="update-button" data-id="<?= $order['id'] ?>" 
            data-product="<?= htmlspecialchars($order['product_name']) ?>" 
            data-quantity="<?= htmlspecialchars($order['quantity_ordered']) ?>" 
+           data-quantity="<?= htmlspecialchars($order['quantity_received']) ?>" 
            data-status="<?= htmlspecialchars($order['status']) ?>">Update</a>
     </td>
 </tr>
@@ -299,7 +318,9 @@ select{
                     // Find the row corresponding to the deleted order and remove it
                     $(`button[data-id='${orderId}']`).closest('tr').remove();
                     alert(response.message || 'Order deleted successfully.');
-                } 
+                } else {
+                    alert(response.message || 'Failed to delete the order.');
+                }
             },
             error: function (xhr, status, error) {
                 console.error(`Error: ${error}`);
@@ -316,21 +337,31 @@ select{
         <h3>Update Order Details</h3>
         <form id="updateForm">
             <input type="hidden" name="id" id="updateOrderId">
+            
+            <!-- Product Name (Read-Only) -->
             <div class="form-group">
                 <label for="updateProductName">Product Name:</label>
-                <input type="text" name="product_name" id="updateProductName" required>
+                <input type="text" name="product_name" id="updateProductName" readonly required>
             </div>
+            
+            <!-- Quantity Ordered (Read-Only) -->
             <div class="form-group">
-                <label for="updateQuantity">Quantity:</label>
-                <input type="number" name="quantity" id="updateQuantity" required>
+                <label for="updateQuantity">Quantity Ordered:</label>
+                <input type="number" name="quantity_ordered" id="updateQuantity" readonly required>
             </div>
+            
+            <!-- Received Quantity (Editable) -->
+            <div class="form-group">
+                <label for="updateReceivedQuantity">Received Quantity:</label>
+                <input type="number" name="received_quantity" id="updateReceivedQuantity" required>
+            </div>
+            
+            <!-- Status (Editable) -->
             <div class="form-group">
                 <label for="updateStatus">Status:</label>
-                <select name="status" id="updateStatus">
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                </select>
+                <input type="text" name="status" id="updateStatus" readonly required>
             </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn-save">Save Changes</button>
                 <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
@@ -339,13 +370,14 @@ select{
     </div>
 </div>
 
+
 <!-- Modal Background -->
 <div id="modalBackground" class="modal-background" onclick="closeUpdateModal()"></div>
 
 <script>
 
 // Open Update Modal
-function openUpdateModal(orderId, productName, quantity, status) {
+function openUpdateModal(orderId, productName, quantityOrdered, status) {
     console.log(`Opening update modal for Order ID: ${orderId}, Product: ${productName}`);
     document.getElementById('updateModal').style.display = 'block';
     document.getElementById('modalBackground').style.display = 'block';
@@ -353,8 +385,11 @@ function openUpdateModal(orderId, productName, quantity, status) {
     // Populate the form with existing values
     document.getElementById('updateOrderId').value = orderId;
     document.getElementById('updateProductName').value = productName;
-    document.getElementById('updateQuantity').value = quantity;
-    document.getElementById('updateStatus').value = status;
+    document.getElementById('updateQuantity').value = quantityOrdered;
+    document.getElementById('updateReceivedQuantity').value = 0; // Default received quantity is 0
+
+// Update the status dynamically
+updateStatus();
 }
 
 // Close Update Modal
@@ -368,10 +403,56 @@ $(document).on('click', '.update-button', function (e) {
 
     const orderId = $(this).data('id');
     const productName = $(this).data('product');
-    const quantity = $(this).data('quantity');
-    const status = $(this).data('status');
+    const quantityOrdered = $(this).data('quantity');
+    function updateStatus() {
+    const quantityOrdered = parseInt(document.getElementById('updateQuantity').value) || 0;
+    const receivedQuantity = parseInt(document.getElementById('updateReceivedQuantity').value) || 0;
 
-    openUpdateModal(orderId, productName, quantity, status);
+    let status = 'Pending'; // Default status
+    if (receivedQuantity === quantityOrdered) {
+        status = 'Completed';
+    } else if (receivedQuantity < quantityOrdered) {
+        status = 'Incomplete';
+    }
+
+    document.getElementById('updateStatus').value = status; // Set the status value
+}
+
+// Add an event listener for changes to the received quantity
+document.getElementById('updateReceivedQuantity').addEventListener('input', updateStatus);
+
+    openUpdateModal(orderId, productName, quantityOrdered, status);
+});
+
+// Handle Update Form Submission
+$('#updateForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const formData = $(this).serialize();
+    const orderId = $('#updateOrderId').val();
+    console.log(`Submitting update for Order ID: ${orderId}`);
+    console.log(`Form Data: ${formData}`);
+
+    $.ajax({
+        url: './database/update-order.php', // Backend endpoint for updating the order
+        type: 'POST',
+        data: formData,
+        dataType: 'json', // Ensure response is JSON
+        success: function (response) {
+            console.log('Update response:', response);
+            if (response.success) {
+                alert(response.message || 'Order updated successfully.');
+                location.reload(); // Refresh the page
+            } else {
+                alert(response.message || 'Failed to update the order.');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(`Error: ${error}`);
+            console.error(`Response: ${xhr.responseText}`);
+            alert('An error occurred while updating the order. Please try again.');
+        }
+    });
 });
 
 // Handle Update Form Submission

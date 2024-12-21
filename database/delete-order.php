@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         } else {
             // Failed to execute the query
             error_log("Failed to execute delete query for ID: $orderId");
-            echo json_encode(['success' => false, 'message' => 'Failed to delete the order.']);
+            
         }
     } catch (Exception $e) {
         // Catch and log any exceptions

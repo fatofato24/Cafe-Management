@@ -64,6 +64,7 @@ try {
             'supplier' => $data['supplier_id'],
             'product' => $data['product_id'],
             'quantity_ordered' => $data['quantity_ordered'],
+            'quantity_received' => 0, // Default quantity_received as 0
             'status' => 'PENDING',  // Default status as ordered
             'batch' => $batch,  // Assign the unique batch
             'created_by' => $_SESSION['user']['id'],  // User ID of the person placing the order
@@ -73,9 +74,9 @@ try {
 
         // Insert SQL query
         $sql = "INSERT INTO order_product 
-                (supplier, product, quantity_ordered, status, batch, created_by, updated_at, created_at)
+                (supplier, product, quantity_ordered, quantity_received, status, batch, created_by, updated_at, created_at)
                 VALUES 
-                (:supplier, :product, :quantity_ordered, :status, :batch, :created_by, :updated_at, :created_at)
+                (:supplier, :product, :quantity_ordered, :quantity_received, :status, :batch, :created_by, :updated_at, :created_at)
                 ";
         
         // Prepare and execute the query

@@ -102,7 +102,7 @@ include('database/supplier_product_bar_graph.php');
         <?php include('partials/app-sidebar.php'); ?>
         <?php include('partials/app-topnav.php'); ?>
 
-        <div class="dashboard_content_container">
+        <div class="dashboard_content_container" id="dashboard_content_container">
             <div class="dashboard_content">
                 <div class="dashboard_content_main">
                     <h1 class="section_header"><i class="fa fa-tachometer-alt"></i> Dashboard</h1>
@@ -231,5 +231,6 @@ new Chart(ctxBar, {
 
         });
     </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
