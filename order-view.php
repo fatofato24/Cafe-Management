@@ -75,293 +75,147 @@ require_once('database/connection.php');
             color: #333;
         }
         .delete-button {
-        padding: 6px 12px;
-        background-color: #ff4d4d;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-    .delete-button:hover {
-        background-color: #ff0000;
-    }
-    .modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    background: white;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-}
+            padding: 6px 12px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .delete-button:hover {
+            background-color: #ff0000;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
 
-.modal-content {
-    position: relative;
-}
+        .modal-content {
+            position: relative;
+        }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-}
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
 
-.modal-background {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
+        .modal-background {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
 
-.form-group {
-    margin-bottom: 15px;
-}
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-label {
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
+        label {
+            display: block;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-input{
-    width: 90%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-select{
-    width: 90%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
+        input{
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        select{
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
 
-.form-actions {
-    text-align: right;
-}
+        .form-actions {
+            text-align: right;
+        }
 
-.btn-save {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .btn-save {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.btn-cancel {
-    padding: 10px 20px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .btn-cancel {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.btn-save:hover {
-    background-color: #45a049;
-}
+        .btn-save:hover {
+            background-color: #45a049;
+        }
 
-.btn-cancel:hover {
-    background-color: #e53935;
-}
-
+        .btn-cancel:hover {
+            background-color: #e53935;
+        }
     </style>
 </head>
 <body>
-    <div id="dashboardMainContainer">
-        <?php include('partials/app-sidebar.php'); ?>
-        <?php include('partials/app-topnav.php'); ?>
 
-        <div class="dashboard_content_container">
-            <div class="dashboard_content">
-                <div class="dashboard_content_main">
-                    <h1 class="section_header"><i class="fa fa-list"></i> List of Purchase Orders</h1>
-                    <?php
-                    // Fetch orders from the database
-                    $stmt = $conn->prepare(
-                        "SELECT 
-                            order_product.id,  -- Add this line to fetch the unique ID
-                            order_product.batch,
-                            products.product_name,
-                            order_product.quantity_ordered,
-                            order_product.quantity_received,
-                            users.first_name, 
-                            users.last_name, 
-                            suppliers.supplier_name, 
-                            order_product.status, 
-                            order_product.created_at, 
-                            order_product.created_by
-                        FROM order_product
-                        JOIN suppliers ON order_product.supplier = suppliers.id
-                        JOIN products ON order_product.product = products.id
-                        JOIN users ON order_product.created_by = users.id
-                        ORDER BY order_product.created_at DESC"
-                    );
-                    
-                    $stmt->execute();
-                    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
-                    // Group rows by batch
-                    $data = [];
-                    foreach ($rows as $row) {
-                        $data[$row['batch']][] = $row;
-                    }
-                    ?>
-
-                    <?php if (!empty($data)): ?>
-                        <?php foreach ($data as $batch_id => $batch_po): ?>
-                            <div class="batch-container">
-                                <div class="batch-title">Batch #: <?= htmlspecialchars($batch_id) ?></div>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Product</th>
-                                            <th>QTY Ordered</th>
-                                            <th>QTY Received</th>                                            <th>Supplier</th>
-                                            <th>Status</th>
-                                            <th>Ordered By</th>
-                                            <th>Created Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($batch_po as $index => $order): ?>
-                                            <tr>
-                                                <td><?= $index + 1 ?></td>
-                                                <td><?= htmlspecialchars($order['product_name']) ?></td>
-                                                <td><?= htmlspecialchars($order['quantity_ordered']) ?></td>
-                                                <td>
-    <?php 
-    // Default value for received quantity as 0 when status is pending
-    $received_quantity = (strtolower($order['status']) == 'pending') ? 0 : $order['quantity_received'];
-    echo htmlspecialchars($received_quantity);
-    ?>
-</td>
-
-                                                <td><?= htmlspecialchars($order['supplier_name']) ?></td>
-                                                <td>
-                                                    <?php 
-                                                    $status_class = '';
-                                                    if (strtolower($order['status']) == 'pending') {
-                                                        $status_class = 'po-badge-pending';
-                                                    } elseif (strtolower($order['status']) == 'completed') {
-                                                        $status_class = 'po-badge-completed';
-                                                    }
-                                                    elseif (strtolower($order['status']) == 'incomplete') {
-                                                        $status_class = 'po-badge-incomplete';
-                                                    }
-                                                    ?>
-                                                    <span class="po-badge <?= $status_class ?>"><?= htmlspecialchars($order['status']) ?></span>
-                                                </td>
-                                                <td><?= htmlspecialchars($order['created_by']) ?></td>
-                                                <td><?= date('M d, Y @ h:i A', strtotime($order['created_at'])) ?></td>                                                                                   
-    <td>
-        <button class="delete-button" data-id="<?= $order['id'] ?>" data-name="<?= htmlspecialchars($order['product_name']) ?>">Delete</button>
-        <a href="#" class="update-button" data-id="<?= $order['id'] ?>" 
-           data-product="<?= htmlspecialchars($order['product_name']) ?>" 
-           data-quantity="<?= htmlspecialchars($order['quantity_ordered']) ?>" 
-           data-quantity="<?= htmlspecialchars($order['quantity_received']) ?>" 
-           data-status="<?= htmlspecialchars($order['status']) ?>">Update</a>
-    </td>
-</tr>
-
-                                                </td>
-                                            </tr>
-                                         <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No purchase orders found.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="js/jquery/jquery-3.7.1.min.js"></script>
-    <script src="js/script.js"></script>
-    <script>
-  $(document).on('click', '.delete-button', function () {
-    const orderId = $(this).data('id');
-    const productName = $(this).data('name');
-
-    console.log(`Deleting order ID: ${orderId}, Product: ${productName}`);
-
-    if (confirm(`Are you sure you want to delete the order for "${productName}"?`)) {
-        $.ajax({
-            url: './database/delete-order.php',
-            type: 'POST',
-            data: { id: orderId },
-            success: function (response) {
-                console.log('Server response:', response); // Log the full response object
-                if (response.success) {
-                    // Find the row corresponding to the deleted order and remove it
-                    $(`button[data-id='${orderId}']`).closest('tr').remove();
-                    alert(response.message || 'Order deleted successfully.');
-                } else {
-                    alert(response.message || 'Failed to delete the order.');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(`Error: ${error}`);
-                
-            }
-        });
-    }
-});
-</script>
 <!-- Update Modal -->
 <div id="updateModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeUpdateModal()">&times;</span>
-        <h3>Update Order Details</h3>
-        <form id="updateForm">
-            <input type="hidden" name="id" id="updateOrderId">
-            
-            <!-- Product Name (Read-Only) -->
+        <h3>Update Order</h3>
+        <form id="updateForm" method="POST">
+            <input type="hidden" id="orderId" name="id"> <!-- Hidden field for orderId -->
             <div class="form-group">
-                <label for="updateProductName">Product Name:</label>
-                <input type="text" name="product_name" id="updateProductName" readonly required>
+                <label for="updateProductName">Product</label>
+                <input type="text" id="updateProductName" name="product_name" disabled>
             </div>
-            
-            <!-- Quantity Ordered (Read-Only) -->
             <div class="form-group">
-                <label for="updateQuantity">Quantity Ordered:</label>
-                <input type="number" name="quantity_ordered" id="updateQuantity" readonly required>
+                <label for="updateQuantity">Quantity Ordered</label>
+                <input type="number" id="updateQuantity" name="quantity_ordered" disabled>
             </div>
-            
-            <!-- Received Quantity (Editable) -->
             <div class="form-group">
-                <label for="updateReceivedQuantity">Received Quantity:</label>
-                <input type="number" name="received_quantity" id="updateReceivedQuantity" required>
+                <label for="updateReceivedQuantity">Quantity Received</label>
+                <input type="number" id="updateReceivedQuantity" name="quantity_received" disabled>
             </div>
-            
-            <!-- Status (Editable) -->
             <div class="form-group">
-                <label for="updateStatus">Status:</label>
-                <input type="text" name="status" id="updateStatus" readonly required>
+                <label for="updateDeliveredQuantity">Quantity Delivered</label>
+                <input type="number" id="updateDeliveredQuantity" name="delivered_quantity" value="0" min="0" required>
             </div>
-
+            <div class="form-group">
+                <label for="updateStatus">Status</label>
+                <select id="updateStatus" name="status">
+                    <option value="Pending">Pending</option>
+                    <option value="Incomplete">Incomplete</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
             <div class="form-actions">
                 <button type="submit" class="btn-save">Save Changes</button>
                 <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
@@ -370,121 +224,159 @@ select{
     </div>
 </div>
 
-
-<!-- Modal Background -->
 <div id="modalBackground" class="modal-background" onclick="closeUpdateModal()"></div>
 
+<div id="dashboardMainContainer">
+    <?php include('partials/app-sidebar.php'); ?>
+    <?php include('partials/app-topnav.php'); ?>
+
+    <div class="dashboard_content_container">
+        <div class="dashboard_content">
+            <div class="dashboard_content_main">
+                <h1 class="section_header"><i class="fa fa-list"></i> List of Purchase Orders</h1>
+                <?php
+                // Fetch orders from the database
+                $stmt = $conn->prepare(
+                    "SELECT 
+                        order_product.id, 
+                        order_product.batch,
+                        products.product_name,
+                        order_product.quantity_ordered,
+                        order_product.quantity_received,
+                        order_product.status, 
+                        order_product.created_at, 
+                        order_product.created_by
+                    FROM order_product
+                    JOIN suppliers ON order_product.supplier = suppliers.id
+                    JOIN products ON order_product.product = products.id
+                    JOIN users ON order_product.created_by = users.id
+                    ORDER BY order_product.created_at DESC"
+                );
+
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Group rows by batch
+                $data = [];
+                foreach ($rows as $row) {
+                    $data[$row['batch']][] = $row;
+                }
+                ?>
+
+                <?php if (!empty($data)): ?>
+                    <?php foreach ($data as $batch_id => $batch_po): ?>
+                        <div class="batch-container">
+                            <div class="batch-title">Batch: <?= $batch_id ?></div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Quantity Ordered</th>
+                                        <th>Quantity Received</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($batch_po as $po): ?>
+                                        <tr>
+                                            <td><?= $po['product_name'] ?></td>
+                                            <td><?= $po['quantity_ordered'] ?></td>
+                                            <td><?= $po['quantity_received'] ?></td>
+                                            <td>
+                                                <span class="po-badge-<?= strtolower($po['status']) ?>">
+                                                    <?= $po['status'] ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="update-button" onclick="openUpdateModal(<?= $po['id'] ?>)">
+                                                    Update
+                                                </button>
+                                                <button class="delete-button" onclick="deleteOrder(<?= $po['id'] ?>)">Delete</button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No purchase orders available.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    function openUpdateModal(orderId) {
+        // Fetch the order details by orderId
+        const order = <?php echo json_encode($rows); ?>.find(order => order.id === orderId);
 
-// Open Update Modal
-function openUpdateModal(orderId, productName, quantityOrdered, status) {
-    console.log(`Opening update modal for Order ID: ${orderId}, Product: ${productName}`);
-    document.getElementById('updateModal').style.display = 'block';
-    document.getElementById('modalBackground').style.display = 'block';
+        // Set the modal fields
+        document.getElementById('orderId').value = order.id;
+        document.getElementById('updateProductName').value = order.product_name;
+        document.getElementById('updateQuantity').value = order.quantity_ordered;
+        document.getElementById('updateReceivedQuantity').value = order.quantity_received;
+        document.getElementById('updateDeliveredQuantity').value = 0; // Always start with 0
+        document.getElementById('updateStatus').value = order.status;
 
-    // Populate the form with existing values
-    document.getElementById('updateOrderId').value = orderId;
-    document.getElementById('updateProductName').value = productName;
-    document.getElementById('updateQuantity').value = quantityOrdered;
-    document.getElementById('updateReceivedQuantity').value = 0; // Default received quantity is 0
-
-// Update the status dynamically
-updateStatus();
-}
-
-// Close Update Modal
-function closeUpdateModal() {
-    document.getElementById('updateModal').style.display = 'none';
-    document.getElementById('modalBackground').style.display = 'none';
-}
-
-$(document).on('click', '.update-button', function (e) {
-    e.preventDefault();
-
-    const orderId = $(this).data('id');
-    const productName = $(this).data('product');
-    const quantityOrdered = $(this).data('quantity');
-    function updateStatus() {
-    const quantityOrdered = parseInt(document.getElementById('updateQuantity').value) || 0;
-    const receivedQuantity = parseInt(document.getElementById('updateReceivedQuantity').value) || 0;
-
-    let status = 'Pending'; // Default status
-    if (receivedQuantity === quantityOrdered) {
-        status = 'Completed';
-    } else if (receivedQuantity < quantityOrdered) {
-        status = 'Incomplete';
+        // Show the modal
+        document.getElementById('updateModal').style.display = 'block';
+        document.getElementById('modalBackground').style.display = 'block';
     }
 
-    document.getElementById('updateStatus').value = status; // Set the status value
-}
+    function closeUpdateModal() {
+        document.getElementById('updateModal').style.display = 'none';
+        document.getElementById('modalBackground').style.display = 'none';
+    }
 
-// Add an event listener for changes to the received quantity
-document.getElementById('updateReceivedQuantity').addEventListener('input', updateStatus);
+    document.getElementById('updateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    openUpdateModal(orderId, productName, quantityOrdered, status);
-});
+        const formData = new FormData(this);
 
-// Handle Update Form Submission
-$('#updateForm').on('submit', function (e) {
-    e.preventDefault();
-
-    const formData = $(this).serialize();
-    const orderId = $('#updateOrderId').val();
-    console.log(`Submitting update for Order ID: ${orderId}`);
-    console.log(`Form Data: ${formData}`);
-
-    $.ajax({
-        url: './database/update-order.php', // Backend endpoint for updating the order
-        type: 'POST',
-        data: formData,
-        dataType: 'json', // Ensure response is JSON
-        success: function (response) {
-            console.log('Update response:', response);
-            if (response.success) {
-                alert(response.message || 'Order updated successfully.');
-                location.reload(); // Refresh the page
+        fetch('update-order.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order updated successfully');
+                location.reload(); 
             } else {
-                alert(response.message || 'Failed to update the order.');
+                alert('Failed to update order: ' + data.message); 
             }
-        },
-        error: function (xhr, status, error) {
-            console.error(`Error: ${error}`);
-            console.error(`Response: ${xhr.responseText}`);
-            alert('An error occurred while updating the order. Please try again.');
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the order');
+        });
     });
-});
 
-// Handle Update Form Submission
-$('#updateForm').on('submit', function (e) {
-    e.preventDefault();
-
-    const formData = $(this).serialize();
-    const orderId = $('#updateOrderId').val();
-    console.log(`Submitting update for Order ID: ${orderId}`);
-    console.log(`Form Data: ${formData}`);
-
-    $.ajax({
-        url: './database/update-order.php', // Backend endpoint for updating the order
-        type: 'POST',
-        data: formData,
-        dataType: 'json', // Ensure response is JSON
-        success: function (response) {
-            console.log('Update response:', response);
-            if (response.success) {
-                alert(response.message || 'Order updated successfully.');
-                location.reload(); // Refresh the page
-            } else {
-                alert(response.message || 'Failed to update the order.');
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error(`Error: ${error}`);
-            console.error(`Response: ${xhr.responseText}`);
-            alert('An error occurred while updating the order. Please try again.');
+    function deleteOrder(orderId) {
+        if (confirm('Are you sure you want to delete this order?')) {
+            fetch('delete-order.php', {
+                method: 'POST',
+                body: new URLSearchParams({ 'id': orderId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Order deleted successfully');
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('Failed to delete order: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the order');
+            });
         }
-    });
-});
+    }
 </script>
+
 </body>
 </html>
