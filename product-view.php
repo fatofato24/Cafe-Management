@@ -55,6 +55,7 @@ $users = include('database/show.php');
             <th>#</th>
             <th>Image</th>
             <th>Product Name</th>
+            <th>Stock</th>
             <th>Description</th>
             <th>Suppliers</th>
             <th>Created By</th>
@@ -74,7 +75,7 @@ $users = include('database/show.php');
                     </td>
                     <td><?= htmlspecialchars($product['product_name']) ?></td>
                     <td><?= htmlspecialchars($product['description']) ?></td>
-                    
+                    <td><?= htmlspecialchars($product['stock']) ?></td>
                     <!-- Suppliers Column -->
                     <td>
                         <?php

@@ -106,8 +106,8 @@ $user = $_SESSION['user'];
                     <div class="reportType">
                         <p>Export Deliveries</p>
                         <div class="alignRight">
-                            <a href="export_deliveries_excel.php" class="reportExportBtn">Excel</a>
-                            <a href="export_deliveries_pdf.php" class="reportExportBtn">PDF</a>
+                            <a href="database/report_csv.php?report=deliveries" class="reportExportBtn">Excel</a>
+                            <a href="database/report_pdf.php?report=deliveries" class="reportExportBtn">PDF</a>
                         </div>
                     </div>
 

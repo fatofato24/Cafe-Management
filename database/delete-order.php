@@ -6,7 +6,7 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-require_once('database/connection.php');
+require_once('connection.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $orderId = intval($_POST['id']); // Sanitize input

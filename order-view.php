@@ -52,7 +52,6 @@ require_once('database/connection.php');
             padding: 5px 10px;
             background-color: #e91e63;
             color: #fff;
-            border-radius: 3px;
             text-decoration: none;
             text-align: center;
         }
@@ -181,10 +180,72 @@ require_once('database/connection.php');
         .btn-cancel:hover {
             background-color: #e53935;
         }
+        .delivery-button {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+.delivery-button:hover {
+    background-color: #0056b3;
+}
+
+/* Modal */
+.modald {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.modald-content {
+    position: relative;
+}
+
+.closed {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modald-background {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+
     </style>
 </head>
 <body>
 
+<div id="deliveryHistoryModal" class="modald">
+    <div class="modal-contentd">
+        <span class="closed" onclick="closeDeliveryHistoryModal()">&times;</span>
+        <h3>Delivery History</h3>
+        <div id="deliveryHistoryContainer"></div>
+    </div>
+</div>
 <!-- Update Modal -->
 <div id="updateModal" class="modal">
     <div class="modal-content">
@@ -210,7 +271,7 @@ require_once('database/connection.php');
             </div>
             <div class="form-group">
                 <label for="updateStatus">Status</label>
-                <select id="updateStatus" name="status">
+                <select id="updateStatus" name="status" required>
                     <option value="Pending">Pending</option>
                     <option value="Incomplete">Incomplete</option>
                     <option value="Completed">Completed</option>
@@ -220,17 +281,17 @@ require_once('database/connection.php');
                 <button type="submit" class="btn-save">Save Changes</button>
                 <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
             </div>
+            <!-- Delivery History Modal -->
         </form>
     </div>
 </div>
-
 <div id="modalBackground" class="modal-background" onclick="closeUpdateModal()"></div>
 
 <div id="dashboardMainContainer">
     <?php include('partials/app-sidebar.php'); ?>
     <?php include('partials/app-topnav.php'); ?>
 
-    <div class="dashboard_content_container">
+    <div class="dashboard_content_container" id="dashboard_content_container">
         <div class="dashboard_content">
             <div class="dashboard_content_main">
                 <h1 class="section_header"><i class="fa fa-list"></i> List of Purchase Orders</h1>
@@ -245,13 +306,15 @@ require_once('database/connection.php');
                         order_product.quantity_received,
                         order_product.status, 
                         order_product.created_at, 
-                        order_product.created_by
+                        order_product.created_by,
+                        suppliers.supplier_name  -- Add supplier_name here
                     FROM order_product
                     JOIN suppliers ON order_product.supplier = suppliers.id
                     JOIN products ON order_product.product = products.id
                     JOIN users ON order_product.created_by = users.id
                     ORDER BY order_product.created_at DESC"
                 );
+                
 
                 $stmt->execute();
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -271,6 +334,7 @@ require_once('database/connection.php');
                                 <thead>
                                     <tr>
                                         <th>Product Name</th>
+                                        <th>Supplier</th>
                                         <th>Quantity Ordered</th>
                                         <th>Quantity Received</th>
                                         <th>Status</th>
@@ -281,6 +345,7 @@ require_once('database/connection.php');
                                     <?php foreach ($batch_po as $po): ?>
                                         <tr>
                                             <td><?= $po['product_name'] ?></td>
+                                            <td><?= $po['supplier_name'] ?></td>
                                             <td><?= $po['quantity_ordered'] ?></td>
                                             <td><?= $po['quantity_received'] ?></td>
                                             <td>
@@ -293,6 +358,8 @@ require_once('database/connection.php');
                                                     Update
                                                 </button>
                                                 <button class="delete-button" onclick="deleteOrder(<?= $po['id'] ?>)">Delete</button>
+                                                <button class="delivery-button" onclick="showDeliveryHistory(<?= $po['id'] ?>)">Delivery History</button>
+
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -307,7 +374,7 @@ require_once('database/connection.php');
         </div>
     </div>
 </div>
-
+<script src="js/script.js"></script>
 <script>
     function openUpdateModal(orderId) {
         // Fetch the order details by orderId
@@ -319,7 +386,7 @@ require_once('database/connection.php');
         document.getElementById('updateQuantity').value = order.quantity_ordered;
         document.getElementById('updateReceivedQuantity').value = order.quantity_received;
         document.getElementById('updateDeliveredQuantity').value = 0; // Always start with 0
-        document.getElementById('updateStatus').value = order.status;
+        document.getElementById('updateStatus').value = order.status || 'Pending';
 
         // Show the modal
         document.getElementById('updateModal').style.display = 'block';
@@ -332,32 +399,34 @@ require_once('database/connection.php');
     }
 
     document.getElementById('updateForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        const formData = new FormData(this);
+    const formData = new FormData(this);
+    console.log('Form Data:', Array.from(formData.entries())); // Debug form data
 
-        fetch('update-order.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Order updated successfully');
-                location.reload(); 
-            } else {
-                alert('Failed to update order: ' + data.message); 
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the order');
-        });
+    fetch('database/update-order.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Server Response:', data); // Debug server response
+        if (data.success) {
+            alert('Order updated successfully');
+            location.reload();
+        } else {
+            alert('Failed to update order: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the order');
     });
+});
 
     function deleteOrder(orderId) {
         if (confirm('Are you sure you want to delete this order?')) {
-            fetch('delete-order.php', {
+            fetch('database/delete-order.php', {
                 method: 'POST',
                 body: new URLSearchParams({ 'id': orderId })
             })
@@ -376,6 +445,39 @@ require_once('database/connection.php');
             });
         }
     }
+    function showDeliveryHistory(orderId) {
+    // Fetch delivery history by orderId
+    fetch(`database/view-purchase-history.php?order_id=${orderId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let deliveries = data.deliveries;
+                let deliveryList = "<ul>";
+                deliveries.forEach(delivery => {
+                    let date = new Date(delivery.date_received); // Convert date to readable format
+                    let formattedDate = date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
+                    deliveryList += `<li>Received: ${delivery.qty_received} on ${formattedDate}</li>`;
+                });
+                deliveryList += "</ul>";
+                // Display the delivery history in a modal or a separate container
+                document.getElementById('deliveryHistoryContainer').innerHTML = deliveryList;
+                document.getElementById('deliveryHistoryModal').style.display = 'block';
+                document.getElementById('modalBackground').style.display = 'block';
+            } else {
+                alert('No delivery history available.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching delivery history:', error);
+            alert('An error occurred while fetching the delivery history.');
+        });
+        
+}
+function closeDeliveryHistoryModal() {
+    document.getElementById('deliveryHistoryModal').style.display = 'none';
+    document.getElementById('modalBackground').style.display = 'none';
+}
+
 </script>
 
 </body>
