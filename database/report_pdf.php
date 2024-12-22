@@ -21,11 +21,23 @@ if (isset($_GET['report'])) {
 
     switch ($reportType) {
         case 'product':
-            $query = "SELECT p.id, p.product_name, p.description, p.created_at, p.updated_at, 
-                             s.supplier_name, u.user_name 
-                      FROM products p
-                      JOIN suppliers s ON p.supplier_id = s.id
-                      JOIN users u ON p.user_id = u.id";
+            $query = "SELECT 
+    ps.id AS id,
+    p.product_name, 
+    p.description, 
+    ps.created_at, 
+    ps.updated_at, 
+    s.supplier_name, 
+    CONCAT(u.first_name, ' ', u.last_name) AS user_name
+FROM 
+    productsuppliers ps
+JOIN 
+    products p ON ps.product = p.id
+JOIN 
+    suppliers s ON ps.supplier = s.id
+JOIN 
+    users u ON p.created_by = u.id
+";
         
             $headers = ['ID', 'Product Name', 'Description', 'Supplier Name', 'User Name', 'Created At', 'Updated At'];
         
