@@ -1,74 +1,48 @@
 <?php
+// Ensure proper session and permissions are in place
 session_start();
 if (!isset($_SESSION['user'])) {
-    header('location: login.php');
+    echo json_encode(['success' => false, 'message' => 'You must be logged in']);
     exit;
 }
 
 require_once('database/connection.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $order_id = $_POST['id'] ?? null;
-    $delivered_quantity = $_POST['delivered_quantity'] ?? null;
-    $status = $_POST['status'] ?? null;
+    // Get form data
+    $orderId = $_POST['id'];
+    $deliveredQuantity = $_POST['delivered_quantity'];
+    $status = $_POST['status'];
 
-    if (empty($order_id) || $delivered_quantity === null || empty($status)) {
-        echo json_encode(['success' => false, 'message' => 'All fields are required.']);
-        exit;
-    }
-
-    if (!is_numeric($delivered_quantity) || $delivered_quantity < 0) {
-        echo json_encode(['success' => false, 'message' => 'Delivered quantity must be a positive number.']);
+    // Validate delivered quantity
+    if ($deliveredQuantity < 0) {
+        echo json_encode(['success' => false, 'message' => 'Delivered quantity cannot be negative']);
         exit;
     }
 
     try {
+        // Begin transaction
         $conn->beginTransaction();
 
-        // Check if the order exists
-        $stmt = $conn->prepare("SELECT quantity_received FROM order_product WHERE id = :order_id");
-        $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $order = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$order) {
-            echo json_encode(['success' => false, 'message' => 'Order not found.']);
-            $conn->rollBack();
-            exit;
-        }
-
-        $current_quantity_received = $order['quantity_received'];
-        $new_quantity_received = $current_quantity_received + $delivered_quantity;
-
-        // Update the order_product table
-        $updateStmt = $conn->prepare(
-            "UPDATE order_product 
-            SET quantity_received = :new_quantity_received, status = :status, date_updated = NOW() 
-            WHERE id = :order_id"
+        // Update the order_product table with new delivered quantity
+        $stmt = $conn->prepare(
+            "UPDATE order_product SET 
+                quantity_received = quantity_received + :delivered_quantity,
+                status = :status,
+                date_updated = NOW()
+            WHERE id = :id"
         );
-        $updateStmt->bindParam(':new_quantity_received', $new_quantity_received, PDO::PARAM_INT);
-        $updateStmt->bindParam(':status', $status, PDO::PARAM_STR);
-        $updateStmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
-        $updateStmt->execute();
+        $stmt->execute(['delivered_quantity' => $deliveredQuantity, 'status' => $status, 'id' => $orderId]);
 
-        // Insert into order_product_history
-        $historyStmt = $conn->prepare(
-            "INSERT INTO order_product_history (order_product_id, qty_received, date_received, date_updated) 
-            VALUES (:order_id, :delivered_quantity, NOW(), NOW())"
-        );
-        $historyStmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
-        $historyStmt->bindParam(':delivered_quantity', $delivered_quantity, PDO::PARAM_INT);
-        $historyStmt->execute();
+        // Optionally log history in order_product_history table if needed
 
+        // Commit transaction
         $conn->commit();
 
-        echo json_encode(['success' => true, 'message' => 'Order updated successfully.']);
+        echo json_encode(['success' => true]);
     } catch (Exception $e) {
         $conn->rollBack();
-        error_log("Error updating order: " . $e->getMessage());
-        echo json_encode(['success' => false, 'message' => 'Server error occurred while updating the order.']);
+        echo json_encode(['success' => false, 'message' => 'Error updating order: ' . $e->getMessage()]);
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
+?>
