@@ -4,7 +4,7 @@
 .dashboard_logo {
     
     margin-top: 10px;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
     color: #f685a2; /* Light pink color for the logo text */
     margin-bottom: 5px;
@@ -122,8 +122,7 @@
     font-size: 19px;
     margin-left: auto; /* Push the icon to the far right */
 }
-
-/* Submenu styling */
+/* Submenu container */
 ul.subMenus {
     list-style: none; /* Remove bullet points */
     margin: 0;
@@ -146,9 +145,10 @@ ul.subMenus a {
     color: #fff; /* Default text color */
     font-size: 16px; /* Adjust font size */
     text-decoration: none; /* Remove underline */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Smooth hover effect */
 }
 
+/* Submenu icons */
 ul.subMenus a i {
     margin-right: 10px; /* Space between icon and text */
     font-size: 14px; /* Submenu icon size */
@@ -159,8 +159,25 @@ ul.subMenus a:hover {
     background-color: #c75270; /* Highlight on hover */
 }
 
+/* Active menu item styles */
 li.limainMenu.active ul.subMenus {
     display: block; /* Show the submenu */
+}
+
+ul.subMenus a.subMenuLink {
+    background-color: #555555; /* Slightly darker background for all submenus */
+    border: none; /* No border for unselected submenu links */
+}
+
+/* Highlighted active submenu link */
+ul.subMenus a.subMenuLink.active {
+    background-color: #333333; /* Darker background for active submenu link */
+    border: 2px solid #c75270; /* Add a border for the active submenu */
+}
+
+/* Submenu hover effect when active */
+ul.subMenus a.subMenuLink.active:hover {
+    background-color: #c75270; /* Highlight on hover */
 }
 
 
@@ -453,4 +470,356 @@ table th, table td {
 #togglePassword:hover {
     color: #f685a2; /* Highlight on hover */
 }
+
+.productTextAreaInput {
+    width: 100%;
+    height: 75px;
+    border-radius: 5px;
+    border-color: #d7d7d7;
+}
+
+.productImages {
+  width: 100px;
+  height: 100px;
+}
+#suppliersSelect {
+    max-height: 200px; /* Adjust height as needed */
+    overflow-y: auto;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #333; /* Dark text color for better readability */
+    background-color: #f9f9f9; /* Light background color */
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    appearance: none; /* Remove default arrow for better custom design */
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+#suppliersSelect:hover {
+    border-color: #f685a2; /* Pink border on hover */
+    background-color: #fff; /* Slightly brighter background */
+}
+
+#suppliersSelect:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #f685a2; /* Pink border for focus */
+    box-shadow: 0px 0px 6px rgba(246, 133, 162, 0.5); /* Soft focus shadow */
+}
+
+.appFormInputContainer {
+    margin-bottom: 20px;
+}
+
+.appFormInputContainer label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333; /* Dark text color */
+}
+
+.orderProductBtn {
+  background: #d93f65;
+  color: #fff;
+}
+
+.orderBtn {
+  height: 33px;
+  border: none;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.submitOrderProductBtn {
+  background: #323232;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.marginTop20 {
+  margin-top: 20px;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+#orderProductLists {
+  margin-top: 20px;
+}
+
+.productNameSelect {
+  font-size: 15px;
+  border: none;
+  background: #fafafa;
+  padding: 3px 17px;
+  border: 1px solid #b0b0b0;
+  border-radius: 2px;
+}
+
+div.orderProductRow {
+  padding: 6px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 25px;
+  padding-top: 25px;
+}
+
+#orderProductLists .row {
+  margin: 0px !important;
+}
+
+.suppliersRows .supplierName {
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #721c24; 
+  text-transform: uppercase;
+}
+
+.suppliersRows .row {
+  padding: 8px 0px;
+}
+
+
+/* Clean and modern color palette */
+:root {
+    --primary-color: #f685a2; /* Pink */
+    --secondary-color: #323232; /* Dark gray */
+    --light-bg-color: #fafafa; /* Light background */
+    --card-bg-color: #ffffff; /* White for card backgrounds */
+    --border-color: #e0e0e0; /* Light gray for borders */
+    --button-hover-color: #c75270; /* Darker pink for hover effect */
+    --font-color: #333; /* Dark gray for text */
+}
+
+/* General layout and typography for the page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    font-size: 24px;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+h1.section_header {
+    font-size: 24px;
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+/* Order Product Form Layout */
+#userAddFormContainer {
+    width: 50%;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: var(--card-bg-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+#userAddFormContainer h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+/* Form elements container */
+.appForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.appFormInputContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Label styling */
+.appFormInputContainer label {
+    font-size: 16px;
+    color: var(--font-color);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Input field styling */
+.appFormInputContainer input,
+#suppliersSelect {
+    font-size: 16px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--light-bg-color);
+    transition: border 0.3s ease;
+}
+
+/* Hover effect for input fields */
+.appFormInputContainer input:hover,
+#suppliersSelect:hover {
+    border-color: var(--primary-color);
+}
+
+/* Button styling */
+.appBtn {
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.appBtn:hover {
+    background-color: var(--button-hover-color);
+}
+
+/* Product Order Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+table th {
+    background-color: #f4f6f9;
+    color: var(--font-color);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+table td {
+    background-color: #fff;
+    color: var(--font-color);
+}
+
+table tr:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Product order row styling */
+.orderProductRow {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#orderProductLists .row {
+    margin: 0;
+}
+
+/* Custom select for suppliers */
+#suppliersSelect {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#suppliersSelect:hover {
+    border-color: var(--primary-color);
+    background-color: #fff;
+}
+
+#suppliersSelect:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 6px rgba(246, 133, 162, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #userAddFormContainer {
+        width: 80%;
+    }
+
+    .orderProductRow {
+        padding: 10px;
+    }
+
+    .appBtn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Success/Error messages */
+.responseMessage {
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    text-align: center;
+}
+
+.responseMessage_success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.responseMessage_error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Hover effects for messages */
+.responseMessage:hover {
+    transform: translateY(-5px);
+    opacity: 0.9;
+}
+/* Ensure the sidebar height is limited to the viewport height */
+.dashboard_sidebar {
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Submenu section that allows scrolling when expanded */
+.subMenus {
+   /* Adjust this based on your design */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+}
+
+/* Optional: For styling the scrollbars (for modern browsers) */
+.subMenus::-webkit-scrollbar {
+    width: 6px;
+}
+
+.subMenus::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.subMenus::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+
 

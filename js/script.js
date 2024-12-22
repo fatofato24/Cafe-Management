@@ -25,10 +25,16 @@ nav.addEventListener('click', (event) => {
         User_image.style.height = '30px';
         user_name.style.fontSize = '12px';
 
-        // Hide menu text in collapsed state
+        // Hide menu text and replace with small identifiers (icons or abbreviations)
         const menuTextElements = document.getElementsByClassName('menuText');
+        const submenuElements = document.getElementsByClassName('submenuText');
         for (let i = 0; i < menuTextElements.length; i++) {
             menuTextElements[i].style.display = 'none';  // Hide text
+        }
+        for (let i = 0; i < submenuElements.length; i++) {
+            submenuElements[i].innerText = submenuElements[i].dataset.shortText || ''; // Replace text
+            submenuElements[i].style.fontSize = '14px';  // Optional: Smaller font
+            submenuElements[i].style.display = 'inline-block'; // Ensure visible
         }
 
         // Change the state of sidebar (collapsed)
@@ -45,17 +51,21 @@ nav.addEventListener('click', (event) => {
         User_image.style.height = '50px';
         user_name.style.fontSize = '22px';
 
-        // Show menu text in expanded state
+        // Show full menu text
         const menuTextElements = document.getElementsByClassName('menuText');
+        const submenuElements = document.getElementsByClassName('submenuText');
         for (let i = 0; i < menuTextElements.length; i++) {
             menuTextElements[i].style.display = 'inline-block';  // Show text
+        }
+        for (let i = 0; i < submenuElements.length; i++) {
+            submenuElements[i].innerText = submenuElements[i].dataset.fullText || ''; // Restore full text
+            submenuElements[i].style.fontSize = 'inherit'; // Reset font size
         }
 
         // Change the state of sidebar (expanded)
         sideBarisOpen = true;
     }
 });
-
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         let clickedE1 = e.target;
@@ -79,21 +89,41 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // Highlight the active menu based on the current URL
+    const currentPage = window.location.pathname.split('/').pop(); // Get the current page file name
+
+    const allMenuLinks = document.querySelectorAll('.dashboard_menu_lists a');
+    allMenuLinks.forEach(link => {
+        const menuLink = link.getAttribute('href');
+
+        if (menuLink.includes(currentPage)) {
+            const parentLi = link.closest('li.limainMenu'); // Parent menu item
+            const submenuLink = link.closest('a'); // Current submenu link
+
+            if (parentLi) {
+                parentLi.classList.add('active'); // Highlight the parent menu
+                const submenu = parentLi.querySelector('.subMenus');
+                if (submenu) {
+                    submenu.style.display = 'block'; // Ensure submenu is visible
+                }
+
+                // Highlight all submenus in this menu
+                const submenuLinks = parentLi.querySelectorAll('.subMenuLink');
+                submenuLinks.forEach(sub => {
+                    sub.style.backgroundColor = ' #dc607f'; // Slightly darker shade for submenus
+                });
+
+                // Highlight the current submenu more distinctly
+                if (submenuLink) {
+                    submenuLink.style.backgroundColor = 'rgb(141, 30, 58)'; // Even darker shade
+                    submenuLink.style.border = '2px solid rgb(255, 255, 255)'; // Add border
+                }
+            }
+        }
+    });
 });
 
- // Highlight the active menu based on the current URL
- const currentPage = window.location.pathname.split('/').pop(); // Get the current page file name
-
- const allMenuLinks = document.querySelectorAll('.dashboard_menu_lists a');
- allMenuLinks.forEach(link => {
-     const menuLink = link.getAttribute('href');
-     if (menuLink.includes(currentPage)) {
-         const parentLi = link.closest('li.limainMenu');
-         if (parentLi) {
-             parentLi.classList.add('active'); // Add the 'active' class for the current menu item
-         }
-     }
- });
 document.addEventListener('DOMContentLoaded', function () {
     const passwordField = document.querySelector('#password');
     const togglePassword = document.querySelector('#togglePassword');
